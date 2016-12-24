@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bhou/Collux.git"
+    "url": "git+https://github.com/bhou/collux.git"
   },
   "keywords": [
     "flux",
@@ -21,9 +21,9 @@
   "author": "Bo HOU <daily.bhou@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bhou/Collux/issues"
+    "url": "https://github.com/bhou/collux/issues"
   },
-  "homepage": "https://github.com/bhou/Collux#readme",
+  "homepage": "https://github.com/bhou/collux#readme",
   "dependencies": {
     "collar.js": "^0.7.4"
   },
