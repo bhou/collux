@@ -1,0 +1,14 @@
+node_modules
+/.idea/
+/.git/
+/src/
+/test/
+/demo/
+/docs/
+/examples/
+/assets/
+/prototype/
+/dist/
+/dev/
+dist
+*.swp

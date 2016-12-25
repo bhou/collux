@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "collar.js-dev-client": "^0.3.1",
+    "collar.js-dev-client": "^0.3.2",
     "react-scripts": "0.8.4"
   },
   "dependencies": {
     "collar.js": "^0.7.4",
+    "collux": "^0.1.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1"
   },

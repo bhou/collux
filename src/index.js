@@ -1,16 +1,22 @@
-import Constants from './Constants';
-import createComponent from './createComponent';
-import createView from './createView';
-import createStore from './createStore';
-import createMemStore from './createMemStore';
-import Dispatcher from './Dispatcher';
+import App from './App';
+import Component from './Component';
+
+import Constants from './archs/Constants';
+import createApp from './createApp';
+import archs from './archs';
+
+import collar from 'collar.js';
 
 export default {
+  App,
+  Component,
+  
   Constants: Constants,
-  createComponent: createComponent,
-  createView: createView,
-  createStore: createStore,
-  createMemStore: createMemStore,
-  Dispatcher: Dispatcher
+  createApp: createApp,
+  registerArch: archs.register,
+  
+  use: function(addon) {
+    collar.use(addon);
+  }
 };
 

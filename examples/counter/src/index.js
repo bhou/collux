@@ -1,16 +1,10 @@
-import collar from 'collar.js';
-import DevToolAddon from 'collar.js-dev-client';
-collar.use(new DevToolAddon());
-
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Collux from '../../../lib/index.js';
 
-// 1. create components
-
-// view
+import DevToolAddon from 'collar.js-dev-client';
+Collux.use(new DevToolAddon());
 
 class CounterApp extends React.Component {
   constructor(props) {
@@ -33,10 +27,17 @@ class CounterApp extends React.Component {
     })
   }
 
+  onIncrementByTen() {
+    this.sensor.send({
+      actionType: 'INC_BY_TEN'
+    })
+  }
+
   render() {
     return (
       <div>
         <h1>{this.state.value}</h1>
+        <button onClick={this.onIncrementByTen.bind(this)}>+10</button>
         <button onClick={this.onIncrement.bind(this)}>+</button>
         <button onClick={this.onDecrement.bind(this)}>-</button>
       </div>
@@ -44,51 +45,37 @@ class CounterApp extends React.Component {
   }
 }
 
-const counterView = Collux.createView({
-  getName: () => 'counter view',
-  render: function() {
-    this.comp = ReactDOM.render(
-      <CounterApp sensor={this.sensor}/>,
-      document.getElementById('root')
-    )
-  },
-  updateState: function(state){
-    this.comp.setState({
-      value: state
-    });
-  },
+let app = Collux.createApp('redux-single-route-app');
+let viewComponent = null;
+
+app.setRenderer(() => {
+  viewComponent = ReactDOM.render(
+    <CounterApp sensor={app.getViewSensor()}/>,
+    document.getElementById('root')
+  )
 });
 
-// store
-var counter = 10;
-const counterStore = Collux.createMemStore({
-  getName: () => 'counter store',
-  initState: () => {return 0},
+app.setViewStateUpdater((state) => {
+  viewComponent.setState(state);
 });
 
-counterStore.reduce('INCREMENT', (prevState, action) => {
-  return prevState + 1;
+app.setStoreStateInitiator(() => {
+  return {value: 100}
 });
 
-counterStore.reduce('DECREMENT', (prevState, action) => {
-  return prevState - 1;
+app.reduce('INCREMENT', (prevState, action) => {
+  return {value: prevState.value + 1};
 });
 
+app.reduce('DECREMENT', (prevState, action) => {
+  return {value: prevState.value - 1};
+});
 
-// dispatcher
-const dispatcher = Collux.Dispatcher.default();
+app.reduce('INC_BY_TEN', (prevState, action) => {
+  return {value: prevState.value + 10};
+})
 
-// 2. connect components
-counterStore.output
-  .to(counterView.input);
+app.run();
 
-dispatcher.output
-  .to(counterStore.input);
-
-counterView.sensor
-  .to(dispatcher.input);
-  
-// 3. render UI
-counterView.render();
 
 
