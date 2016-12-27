@@ -9,7 +9,7 @@ class ReduxSingleRouteApp extends App {
   constructor(options = {}) {
     super();
 
-    this._sysComponent = this.createComponent('app');
+    this._sysComponent = this.createComponent('system');
     this._appSensor = this._sysComponent.ns().sensor('app sensor', function() {})
     
     this.view = new ViewComponent({

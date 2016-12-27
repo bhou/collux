@@ -1,6 +1,6 @@
 {
   "name": "collux",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "flux, redux, collar.js, architecture",
   "main": "lib/index.js",
   "scripts": {
