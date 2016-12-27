@@ -15700,15 +15700,15 @@
 	      getName: function getName() {
 	        return 'view';
 	      },
-	      render: options.renderer,
-	      updateState: options.viewStateUpdater
+	      render: options.render,
+	      updateState: options.updateState
 	    });
 
 	    _this.store = new _MemoryStoreComponent2.default({
 	      getName: function getName() {
 	        return 'store';
 	      },
-	      initState: options.storeStateInitiator
+	      initState: options.initState
 	    });
 	    return _this;
 	  }
@@ -16022,14 +16022,15 @@
 	      }).to(this.setStateActuator()).map('prepare [render]', function (s) {
 	        return s.set(_Constants2.default.MSG_TYPE, _Constants2.default.MSG_RENDER).set(_Constants2.default.KEY_STATE, s.getResult()).del(_Constants2.default.ACTION_TYPE).del('__result__');
 	      }).to(this._errorhandler);
-
-	      this.reduce(_Constants2.default.ACTION_GET_STATE, function (prevState, action) {
-	        return prevState;
-	      });
-
-	      this.reduce(_Constants2.default.ACTION_SET_STATE, function (prevState, action) {
-	        return action.state;
-	      });
+	      /*
+	          this.reduce(Constants.ACTION_GET_STATE, (prevState, action) => {
+	            return prevState;
+	          });
+	      
+	          this.reduce(Constants.ACTION_SET_STATE, (prevState, action) => {
+	            return action.state;
+	          });
+	      */
 	    }
 	  }, {
 	    key: 'setStateSetter',

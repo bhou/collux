@@ -83,7 +83,7 @@ class StoreComponent extends Component {
           .del('__result__');
       })
       .to(this._errorhandler);
-
+/*
     this.reduce(Constants.ACTION_GET_STATE, (prevState, action) => {
       return prevState;
     });
@@ -91,6 +91,7 @@ class StoreComponent extends Component {
     this.reduce(Constants.ACTION_SET_STATE, (prevState, action) => {
       return action.state;
     });
+*/
   }
 
   setStateSetter(stateSetter, async) {

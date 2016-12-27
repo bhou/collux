@@ -58,16 +58,16 @@ class Home extends React.Component {
 }
 
 let app = Collux.createApp('redux-single-route-app', {
-  renderer: () => {
+  render: () => {
     viewComponent = ReactDOM.render(
       <CounterApp sensor={app.getViewSensor()}/>,
       document.getElementById('root')
     )
   },
-  viewStateUpdater: (state) => {
+  updateState: (state) => {
     viewComponent.setState(state);
   },
-  storeStateInitiator: () => {
+  initState: () => {
     return {value: 101}
   }
 });

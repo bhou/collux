@@ -14,15 +14,15 @@ class ReduxSingleRouteApp extends App {
     this.view = new ViewComponent({
       getName: () => 'view',
       render: 
-        options.renderer,
+        options.render,
       updateState: 
-        options.viewStateUpdater,
+        options.updateState,
     });
 
     this.store = new MemoryStoreComponent({
       getName: () => 'store',
       initState:
-        options.storeStateInitiator,
+        options.initState,
     });
   }
 
