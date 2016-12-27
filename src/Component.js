@@ -3,12 +3,12 @@ import collar from 'collar.js';
 class Component {
   constructor(name, namespace, metadata = {}) {
     this.name = name || Component.getDefaultComponentName();
-    this.namespace = namespace ? namespace : name;
+    this.namespace = namespace || this.name;
     this.metadata = metadata;
 
     if (!this.metadata.arch) this.metadata.arch = name;
-
-    this._ns = collar.ns(namespace, this.metadata);
+    
+    this._ns = collar.ns(this.namespace, this.metadata);
     this._input = this._ns.input(this.name + '.input');
     this._output = this._ns.output(this.name + '.output');
     this._handleMsg = collar.toNode(this._input, this._output);

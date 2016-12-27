@@ -5,66 +5,84 @@ class StoreComponent extends Component {
   constructor(options = {}) {
     let name = options.getName ? options.getName() : StoreComponent.getNextDefaultStoreName();
     super(name);
+    this.options = options;
     this._isGetStateAsync = !! options.getStateAsync;
     this._isSetStateAsync = !! options.setStateAsync;
     this._isInitStateAsync = !! options.initStateAsync;
 
-    this._syncStateGetter = options.getState || function() {return {}};
+    this._syncStateGetter = options.getState;
     this._asyncStateGetter = options.getStateAsync;
 
-    this._syncStateSetter = options.setState || function(state) {};
+    this._syncStateSetter = options.setState;
     this._asyncStateSetter = options.setStateAsync;
 
-    this._syncStateInitiator = options.initState || function() {return {}};
+    this._syncStateInitiator = options.initState;
     this._asyncStateInitiator = options.initStateAsync;
-
+    
     this._prepareStateChanged = this.ns().map('prepare [state changed]', {
-      __result__: 'the new store state object'
-    }, {
-      msgType: '[state changed]',
-      state: 'the new store state object'
-    }, s => {
+        __result__: 'the new store state object'
+      }, {
+        msgType: '[state changed]',
+        state: 'the new store state object'
+      }, s => {
         return s.new({
           msgType: Constants.MSG_STATE_CHANGED,
           state: s.getResult()
         })
       });
-    this._prepareStateChanged
-      .errors((s) => {
-        console.error(s.error);
-      })
-      .to(this.output());
 
-
-    this._saveStateAndNotify = this.setStateActuator();
-    this._saveStateAndNotify.to(this._prepareStateChanged);
+    this._errorhandler = this.ns().errors(s => {
+        console.log(s.error);
+      });
   }
 
   init() {
+    this._errorhandler.to(this.output());
+    
+    // connect the nodes here
+    this._prepareStateChanged.to(this._errorhandler);
+
     // --------------------------
     // basic flow
+    
+    // render keeps all the properties in your signal
+    this.input()
+      .when(Constants.ACTION_INITIATE, s => {
+        return s.get(Constants.ACTION_TYPE) === Constants.ACTION_INITIATE;
+      })
+      .to(this.initStateActuator())
+      .map('reduce', {
+        __result__: 'the previous state object'
+      }, {
+        state: 'the new state obejct'
+      }, s => {
+        return s.set(Constants.KEY_STATE, s.getResult());
+      })
+      .to(this.setStateActuator())
+      .errors(s => {
+        console.error(s.error);
+      });
+
     this.input()
       .when(Constants.ACTION_RENDER, s => {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_RENDER;
       })
-      .to(this.initStateActuator())
-      .map('reduce', s => {
-        let prevState = s.getResult();
-        return s.new({
-          state: prevState
-        })
+      .to(this.getStateActuator())
+      .map('reduce', {
+        __result__: 'the previous state object'
+      }, {
+        state: 'the new state obejct'
+      }, s => {
+        return s.set(Constants.KEY_STATE, s.getResult());
       })
       .to(this.setStateActuator())
       .map('prepare [render]', s => {
-        return s.new({
-          msgType: Constants.MSG_RENDER,
-          state: s.getResult()
-        })
+        return s.set(Constants.MSG_TYPE, Constants.MSG_RENDER)
+          .set(Constants.KEY_STATE, s.getResult())
+          .del(Constants.ACTION_TYPE)
+          .del('__result__');
       })
-      .errors(s => {
-        console.log(s.error);
-      })
-      .to(this.output());
+      .to(this._errorhandler);
 
     this.reduce(Constants.ACTION_GET_STATE, (prevState, action) => {
       return prevState;
@@ -103,12 +121,15 @@ class StoreComponent extends Component {
   }
 
   initStateActuator() {
-    return this.ns().actuator('state initiator', { 
-      any: 'the initiatation parameter'
+    let actuator = this.ns().actuator('state initiator', { 
+      any: 'parameter'
     }, {
-      __result__: 'initialised state'
+      __result__: 'initial state'
     }, (s, done) => {
       try {
+        if (!this._asyncStateInitiator && !this._syncStateInitiator) {
+          return done();
+        }
         if (this._isInitStateAsync) {
           this._asyncStateInitiator.call(this, done);
         } else {
@@ -120,13 +141,23 @@ class StoreComponent extends Component {
       }
     });
 
+    if ((!this._asyncStateInitiator && !this._syncStateInitiator)) {
+      actuator.removeFeature('impl').addFeature('todo');
+    } else {
+      actuator.removeFeature('todo').addFeature('impl');
+    }
+    return actuator;
   }
 
   getStateActuator() {
-    return this.ns().actuator('state getter', {}, {
+    let actuator = this.ns().actuator('state getter', {}, {
       __result__: 'the current state object'
     }, (s, done) => {
       try {
+        if (!this._asyncStateGetter && !this._syncStateGetter) {
+          return done();
+        }
+
         if (this._isGetStateAsync) {
           this._asyncStateGetter.call(this, done);
         } else {
@@ -137,6 +168,13 @@ class StoreComponent extends Component {
         return done(e);
       }
     });
+
+    if (!this._asyncStateGetter && !this._syncStateGetter)  {
+      actuator.removeFeature('impl').addFeature('todo');
+    } else {
+      actuator.removeFeature('todo').addFeature('impl');
+    }
+    return actuator;
   }
 
   setStateActuator() {
@@ -146,9 +184,13 @@ class StoreComponent extends Component {
       __result__: 'the saved state object'
     }, (s, done) => {
       try {
-        let state = s.get(Constants.STATE);
+        let state = s.get(Constants.KEY_STATE);
+        if (!this._asyncStateSetter && !this._syncStateSetter) {
+          return done(null, state);
+        }
+
         if (state === null || state === undefined) {
-          return done(new Error('state could NOT be null or undefined! Maybe use INITIATE action to init the state?'));
+          return done(new Error('state could NOT be null or undefined! Maybe setup a state initiator before starting the app?'));
         }
 
         if (this._isSetStateAsync) {
@@ -162,6 +204,11 @@ class StoreComponent extends Component {
       }
     });
 
+    if (!this._asyncStateSetter && !this._syncStateSetter) {
+      actuator.removeFeature('impl').addFeature('todo');
+    } else {
+      actuator.removeFeature('todo').addFeature('impl');
+    }
     return actuator;
   }
 
@@ -172,7 +219,7 @@ class StoreComponent extends Component {
   reduce(actionType, reducer) {
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
-      .to('get previous state', this.getStateActuator())
+      .to('state getter', this.getStateActuator())
       .map('reduce', {
         __result__: 'the previous state object'
       }, {
@@ -185,13 +232,14 @@ class StoreComponent extends Component {
           state: newState
         });
       })
-      .to('save new state', this._saveStateAndNotify);
+      .to('state setter', this.setStateActuator())
+      .to(this._prepareStateChanged);
   }
 
   reduceAsync(actionType, reducer) {
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
-      .to('get previous state', this.getStateActuator())
+      .to('state getter', this.getStateActuator())
       .map('reduce', {
         __result__: 'the previous state object'
       }, {
@@ -206,7 +254,8 @@ class StoreComponent extends Component {
           done(null, newState);
         });
       })
-      .to('save new state', this._saveStateAndNotify);
+      .to('state setter', this.setStateActuator())
+      .to(this._prepareStateChanged);
   }
 
   static getNextDefaultStoreName() {

@@ -5,37 +5,39 @@ class ViewComponent extends Component {
   constructor(options = {}) {
     let name = options.getName ? options.getName() : ViewComponent.getNextDefaultViewName();
     super(name);
-    
-    this._renderer = options.render || function() {};
-    this._stateUpdater = options.updateState || function(state) {};
+    this.options = options;
+
+
+    this._renderer = options.render;
+    this._stateUpdater = options.updateState;
 
     this._sensor = this.ns().sensor(this.name + ' sensor', function() {});
 
-    this._updateStatePipeline = this.getUpdateStateActuator();
-    this._updateStatePipeline
-      .errors(s => {
+    this._errorhandler = this.ns().errors(s => {
         console.error(s.error);
-      })
-      .to(this.output());
+      });
+;
   }
 
   init() {
+    this._errorhandler.to(this.output());
+
     // basic msg handling
     this.input()
       .when(Constants.MSG_RENDER, {
         msgType: 'must be [render]'
       }, s => s.get(Constants.MSG_TYPE) === Constants.MSG_RENDER)
-      .do('renderer', s => {
-        this.render();
-      })
-      .to(this._updateStatePipeline)
+      .to(this.getRendererActuator())
+      .to(this.getUpdateStateActuator())
+      .to(this._errorhandler);
       
     this.input()
       .when(Constants.MSG_STATE_CHANGED, {
         msgType: 'must be [state changed]',
         state: 'the new state object'
       }, s => s.get(Constants.MSG_TYPE) === Constants.MSG_STATE_CHANGED)
-      .to(this._updateStatePipeline)
+      .to(this.getUpdateStateActuator())
+      .to(this._errorhandler);
   }
 
   start() {
@@ -70,14 +72,37 @@ class ViewComponent extends Component {
   }
 
   getUpdateStateActuator() {
-    return this.ns().actuator('view state updator', (s, done) => {
+    let actuator = this.ns().actuator('view state updator', (s, done) => {
       try {
-        this.updateState(s.get(Constants.STATE));
+        if (!this._stateUpdater) return done();
+        this.updateState(s.get(Constants.KEY_STATE));
         done();
       } catch (e) {
         return done(e);
       }
     });
+
+    if (!this._stateUpdater) actuator.removeFeature('impl').addFeature('todo');
+    else actuator.removeFeature('todo').addFeature('impl');
+
+    return actuator;
+  }
+
+  getRendererActuator() {
+    let actuator = this.ns().actuator('renderer', (s, done) => {
+      try {
+        if (!this._renderer) return done();
+        this.render();
+        done();
+      } catch (e) {
+        return done(e);
+      }
+    });
+
+    if (!this._renderer) actuator.removeFeature('impl').addFeature('todo');
+    else actuator.removeFeature('todo').addFeature('impl');
+
+    return actuator;
   }
 
   static getNextDefaultViewName() {

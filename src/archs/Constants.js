@@ -2,22 +2,19 @@ export default {
   MSG_TYPE: 'msgType',
   ACTION_TYPE: 'actionType',
 
-  // msg
+  // msg type values
   MSG_RENDER: 'render',
   MSG_STATE_CHANGED: 'state changed',
 
-  // action
-  ACTION_INITIATE: 'INITIATE',
+  // action type value
   ACTION_GET_STATE: 'GET_STATE',
   ACTION_SET_STATE: 'SET_STATE',
+  ACTION_INITIATE: 'INITIATE',
   ACTION_RENDER: 'RENDER',
 
-  // other keys in action / msg
-  STATE: 'state',
-  
-  ROUTE: 'route',
 
-  // predefined state key
-  STATE_ROUTE: '__ROUTE__',
+  // action/msg keys
+  KEY_ROUTE: 'route',
+  KEY_URL: 'url',
+  KEY_STATE: 'state',
 }
-

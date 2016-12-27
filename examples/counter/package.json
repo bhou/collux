@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "collar-dev-server": "^0.3.11",
     "collar.js-dev-client": "^0.3.2",
     "react-scripts": "0.8.4"
   },

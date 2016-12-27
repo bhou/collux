@@ -1,4 +1,5 @@
-import buildReduxSingleRouteApp from './redux/ReduxSingleRouteApp';
+import ReduxSingleRouteApp from './ReduxSingleRouteApp';
+import ReduxMultiRoutesApp from './ReduxMultipleRoutesApp';
 
 class ArchitectureRegistry {
   constructor() {
@@ -16,6 +17,11 @@ class ArchitectureRegistry {
 
 let archs = new ArchitectureRegistry();
 
-archs.register('redux-single-route-app', buildReduxSingleRouteApp);
+archs.register('redux-single-route-app', function(appName, options) {
+  return new ReduxSingleRouteApp(appName, options);
+});
+archs.register('redux-multiple-routes-app', function(appName, options) {
+  return new ReduxMultiRoutesApp(appName, options);
+});
 
 export default archs;
