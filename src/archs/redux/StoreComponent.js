@@ -33,6 +33,8 @@ class StoreComponent extends Component {
         })
       });
 
+    this._saveStatePipeline = null;
+
     this._errorhandler = this.ns().errors(s => {
         console.log(s.error);
       });
@@ -210,10 +212,13 @@ class StoreComponent extends Component {
   }
   
   reduce(actionType, reducer) {
-    if (this._reduceCounter == 0) 
+    if (this._reduceCounter == 0) {
       this._prepareStateChanged.to(this._errorhandler);
+      this._saveStatePipeline = this.setStateActuator();
+      this._saveStatePipeline.to(this._prepareStateChanged);
+    } 
     
-    this._recuceCounter++;
+    this._reduceCounter++;
 
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
@@ -230,15 +235,17 @@ class StoreComponent extends Component {
           state: newState
         });
       })
-      .to('state setter', this.setStateActuator())
-      .to(this._prepareStateChanged);
+      .to(this._saveStatePipeline);
   }
 
   reduceAsync(actionType, reducer) {
-    if (this._reduceCounter == 0) 
+    if (this._reduceCounter == 0) {
       this._prepareStateChanged.to(this._errorhandler);
+      this._saveStatePipeline = this.setStateActuator();
+      this._saveStatePipeline.to(this._prepareStateChanged);
+    }
     
-    this._recuceCounter++;
+    this._reduceCounter++;
     
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)

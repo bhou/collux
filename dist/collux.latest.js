@@ -15983,6 +15983,8 @@
 	      });
 	    });
 
+	    _this._saveStatePipeline = null;
+
 	    _this._errorhandler = _this.ns().errors(function (s) {
 	      console.log(s.error);
 	    });
@@ -16163,9 +16165,13 @@
 	  }, {
 	    key: 'reduce',
 	    value: function reduce(actionType, reducer) {
-	      if (this._reduceCounter == 0) this._prepareStateChanged.to(this._errorhandler);
+	      if (this._reduceCounter == 0) {
+	        this._prepareStateChanged.to(this._errorhandler);
+	        this._saveStatePipeline = this.setStateActuator();
+	        this._saveStatePipeline.to(this._prepareStateChanged);
+	      }
 
-	      this._recuceCounter++;
+	      this._reduceCounter++;
 
 	      this.input().when(actionType, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === actionType;
@@ -16180,14 +16186,18 @@
 	        return s.new({
 	          state: newState
 	        });
-	      }).to('state setter', this.setStateActuator()).to(this._prepareStateChanged);
+	      }).to(this._saveStatePipeline);
 	    }
 	  }, {
 	    key: 'reduceAsync',
 	    value: function reduceAsync(actionType, reducer) {
-	      if (this._reduceCounter == 0) this._prepareStateChanged.to(this._errorhandler);
+	      if (this._reduceCounter == 0) {
+	        this._prepareStateChanged.to(this._errorhandler);
+	        this._saveStatePipeline = this.setStateActuator();
+	        this._saveStatePipeline.to(this._prepareStateChanged);
+	      }
 
-	      this._recuceCounter++;
+	      this._reduceCounter++;
 
 	      this.input().when(actionType, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === actionType;
