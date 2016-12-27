@@ -19,6 +19,8 @@ class StoreComponent extends Component {
     this._syncStateInitiator = options.initState;
     this._asyncStateInitiator = options.initStateAsync;
 
+    this._reduceCounter = 0;
+
     this._prepareStateChanged = this.ns().map('prepare [state changed]', {
         __result__: 'the new store state object'
       }, {
@@ -40,7 +42,6 @@ class StoreComponent extends Component {
     this._errorhandler.to(this.output());
     
     // connect the nodes here
-    this._prepareStateChanged.to(this._errorhandler);
 
     // --------------------------
     // basic flow
@@ -83,15 +84,6 @@ class StoreComponent extends Component {
           .del('__result__');
       })
       .to(this._errorhandler);
-/*
-    this.reduce(Constants.ACTION_GET_STATE, (prevState, action) => {
-      return prevState;
-    });
-
-    this.reduce(Constants.ACTION_SET_STATE, (prevState, action) => {
-      return action.state;
-    });
-*/
   }
 
   setStateSetter(stateSetter, async) {
@@ -218,6 +210,11 @@ class StoreComponent extends Component {
   }
   
   reduce(actionType, reducer) {
+    if (this._reduceCounter == 0) 
+      this._prepareStateChanged.to(this._errorhandler);
+    
+    this._recuceCounter++;
+
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
       .to('state getter', this.getStateActuator())
@@ -238,6 +235,11 @@ class StoreComponent extends Component {
   }
 
   reduceAsync(actionType, reducer) {
+    if (this._reduceCounter == 0) 
+      this._prepareStateChanged.to(this._errorhandler);
+    
+    this._recuceCounter++;
+    
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
       .to('state getter', this.getStateActuator())

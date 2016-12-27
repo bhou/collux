@@ -134,12 +134,10 @@ let store = new Collux.StoreComponent({
 });
 app.setStore(store);
 */
-
 app.reduce('INCREMENT', (prevState, action) => {
   return {value: prevState.value + 1};
 });
 
-/*
 app.reduce('DECREMENT', (prevState, action) => {
   return {value: prevState.value - 1};
 });
@@ -147,7 +145,7 @@ app.reduce('DECREMENT', (prevState, action) => {
 app.reduce('INC_BY_TEN', (prevState, action) => {
   return {value: prevState.value + 10};
 });
-*/
+
 
 app.run();
 

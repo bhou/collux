@@ -15969,6 +15969,8 @@
 	    _this._syncStateInitiator = options.initState;
 	    _this._asyncStateInitiator = options.initStateAsync;
 
+	    _this._reduceCounter = 0;
+
 	    _this._prepareStateChanged = _this.ns().map('prepare [state changed]', {
 	      __result__: 'the new store state object'
 	    }, {
@@ -15993,7 +15995,6 @@
 	      this._errorhandler.to(this.output());
 
 	      // connect the nodes here
-	      this._prepareStateChanged.to(this._errorhandler);
 
 	      // --------------------------
 	      // basic flow
@@ -16022,15 +16023,6 @@
 	      }).to(this.setStateActuator()).map('prepare [render]', function (s) {
 	        return s.set(_Constants2.default.MSG_TYPE, _Constants2.default.MSG_RENDER).set(_Constants2.default.KEY_STATE, s.getResult()).del(_Constants2.default.ACTION_TYPE).del('__result__');
 	      }).to(this._errorhandler);
-	      /*
-	          this.reduce(Constants.ACTION_GET_STATE, (prevState, action) => {
-	            return prevState;
-	          });
-	      
-	          this.reduce(Constants.ACTION_SET_STATE, (prevState, action) => {
-	            return action.state;
-	          });
-	      */
 	    }
 	  }, {
 	    key: 'setStateSetter',
@@ -16171,6 +16163,10 @@
 	  }, {
 	    key: 'reduce',
 	    value: function reduce(actionType, reducer) {
+	      if (this._reduceCounter == 0) this._prepareStateChanged.to(this._errorhandler);
+
+	      this._recuceCounter++;
+
 	      this.input().when(actionType, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === actionType;
 	      }).to('state getter', this.getStateActuator()).map('reduce', {
@@ -16189,6 +16185,10 @@
 	  }, {
 	    key: 'reduceAsync',
 	    value: function reduceAsync(actionType, reducer) {
+	      if (this._reduceCounter == 0) this._prepareStateChanged.to(this._errorhandler);
+
+	      this._recuceCounter++;
+
 	      this.input().when(actionType, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === actionType;
 	      }).to('state getter', this.getStateActuator()).map('reduce', {
