@@ -5,8 +5,8 @@ import RouterComponent from './redux/RouterComponent';
 import ReduxSingleRouteApp from './ReduxSingleRouteApp';
 
 class ReduxMultipleRoutesApp extends ReduxSingleRouteApp {
-  constructor(appName, options = {}) {
-    super(appName, options);
+  constructor(options = {}) {
+    super(options);
     this.view = new MultiRouteViewComponent({
       getName: () => 'view',
     });

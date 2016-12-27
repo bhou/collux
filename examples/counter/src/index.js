@@ -12,9 +12,7 @@ class CounterApp extends React.Component {
   constructor(props) {
     super(props);
     this.sensor = this.props.sensor;
-    this.state = {
-      value: 0
-    }
+    this.state = {}
   }
 
   onIncrement() {
@@ -59,8 +57,21 @@ class Home extends React.Component {
   }
 }
 
-//let app = Collux.createApp('redux-single-route-app');
-let app = Collux.createApp('redux-multiple-routes-app');
+let app = Collux.createApp('redux-single-route-app', {
+  renderer: () => {
+    viewComponent = ReactDOM.render(
+      <CounterApp sensor={app.getViewSensor()}/>,
+      document.getElementById('root')
+    )
+  },
+  viewStateUpdater: (state) => {
+    viewComponent.setState(state);
+  },
+  storeStateInitiator: () => {
+    return {value: 101}
+  }
+});
+//let app = Collux.createApp('redux-multiple-routes-app');
 let viewComponent = null;
 
 /*
@@ -76,6 +87,7 @@ app.setViewStateUpdater((state) => {
 });
 */
 
+/*
 app.setDefaultRoute('/home');
 
 app.route('/counter', {
@@ -104,11 +116,13 @@ app.route('/home', {
     viewComponent.setState(state);
   }
 });
+*/
 
-
+/*
 app.setStoreStateInitiator(() => {
   return {value: 100}
 });
+*/
 
 /*
 let myState = {value : 0};
@@ -125,13 +139,15 @@ app.reduce('INCREMENT', (prevState, action) => {
   return {value: prevState.value + 1};
 });
 
+/*
 app.reduce('DECREMENT', (prevState, action) => {
   return {value: prevState.value - 1};
 });
 
 app.reduce('INC_BY_TEN', (prevState, action) => {
   return {value: prevState.value + 10};
-})
+});
+*/
 
 app.run();
 

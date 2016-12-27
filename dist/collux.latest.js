@@ -15686,14 +15686,12 @@
 	var ReduxSingleRouteApp = function (_App) {
 	  _inherits(ReduxSingleRouteApp, _App);
 
-	  function ReduxSingleRouteApp(appName) {
-	    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	  function ReduxSingleRouteApp() {
+	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 	    _classCallCheck(this, ReduxSingleRouteApp);
 
 	    var _this = _possibleConstructorReturn(this, (ReduxSingleRouteApp.__proto__ || Object.getPrototypeOf(ReduxSingleRouteApp)).call(this));
-
-	    _this.name = appName;
 
 	    _this._sysComponent = _this.createComponent('app');
 	    _this._appSensor = _this._sysComponent.ns().sensor('app sensor', function () {});
@@ -17525,12 +17523,12 @@
 	var ReduxMultipleRoutesApp = function (_ReduxSingleRouteApp) {
 	  _inherits(ReduxMultipleRoutesApp, _ReduxSingleRouteApp);
 
-	  function ReduxMultipleRoutesApp(appName) {
-	    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	  function ReduxMultipleRoutesApp() {
+	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 	    _classCallCheck(this, ReduxMultipleRoutesApp);
 
-	    var _this = _possibleConstructorReturn(this, (ReduxMultipleRoutesApp.__proto__ || Object.getPrototypeOf(ReduxMultipleRoutesApp)).call(this, appName, options));
+	    var _this = _possibleConstructorReturn(this, (ReduxMultipleRoutesApp.__proto__ || Object.getPrototypeOf(ReduxMultipleRoutesApp)).call(this, options));
 
 	    _this.view = new _MultiRouteViewComponent2.default({
 	      getName: function getName() {

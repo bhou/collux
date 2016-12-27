@@ -5,9 +5,8 @@ import ViewComponent from './redux/ViewComponent';
 import page from 'page'; // TODO; remove it. this is not good, single route app do not need page module
 
 class ReduxSingleRouteApp extends App {
-  constructor(appName, options = {}) {
+  constructor(options = {}) {
     super();
-    this.name = appName;
 
     this._sysComponent = this.createComponent('app');
     this._appSensor = this._sysComponent.ns().sensor('app sensor', function() {})
@@ -22,7 +21,7 @@ class ReduxSingleRouteApp extends App {
 
     this.store = new MemoryStoreComponent({
       getName: () => 'store',
-      initState: 
+      initState:
         options.storeStateInitiator,
     });
   }

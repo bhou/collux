@@ -18,7 +18,7 @@ class StoreComponent extends Component {
 
     this._syncStateInitiator = options.initState;
     this._asyncStateInitiator = options.initStateAsync;
-    
+
     this._prepareStateChanged = this.ns().map('prepare [state changed]', {
         __result__: 'the new store state object'
       }, {
