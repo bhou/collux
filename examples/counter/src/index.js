@@ -6,7 +6,16 @@ import Collux from '../../../lib/index.js';
 import DevToolAddon from 'collar.js-dev-client';
 Collux.use(new DevToolAddon());
 
-const Link = Collux.Link;
+let app = Collux.createApp('redux-single-route-app', {
+  updateState: (state) => {
+    viewComponent.setState(state);
+  },
+  initState: () => {
+    return {value: 101}
+  }
+});
+
+const Link = app.Link;
 
 class CounterApp extends React.Component {
   constructor(props) {
@@ -36,7 +45,7 @@ class CounterApp extends React.Component {
   render() {
     return (
       <div>
-        <Link to='/home' sensor={this.sensor}>back to home</Link>
+        <Link to='/home'>back to home</Link>
         <h1>{this.state.value}</h1>
         <button onClick={this.onIncrementByTen.bind(this)}>+10</button>
         <button onClick={this.onIncrement.bind(this)}>+</button>
@@ -57,22 +66,14 @@ class Home extends React.Component {
   }
 }
 
-let app = Collux.createApp('redux-single-route-app', {
-  render: () => {
-    viewComponent = ReactDOM.render(
-      <CounterApp sensor={app.getViewSensor()}/>,
-      document.getElementById('root')
-    )
-  },
-  updateState: (state) => {
-    viewComponent.setState(state);
-  },
-  initState: () => {
-    return {value: 101}
-  }
-});
 //let app = Collux.createApp('redux-multiple-routes-app');
 let viewComponent = null;
+app.setRenderer(() => {
+  viewComponent = ReactDOM.render(
+    <CounterApp sensor={app.getViewSensor()}/>,
+    document.getElementById('root')
+  )
+})
 
 /*
 app.setRenderer(() => {
