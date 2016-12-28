@@ -1,13 +1,14 @@
 {
   "name": "collux",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "flux, redux, collar.js, architecture",
   "main": "lib/index.js",
   "scripts": {
     "test": "nodeunit test",
-    "build": "babel ./src -d ./lib",
+    "build": "node node_modules/babel-cli/bin/babel.js ./src -d ./lib",
     "build:examples": "babel ./examples/**/*.js -d ./lib",
-    "webpack": "node_modules/webpack/bin/webpack.js"
+    "webpack": "node_modules/webpack/bin/webpack.js",
+    "webpack:display": "node_modules/webpack/bin/webpack.js --display-reasons --display-modules"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,7 @@
   },
   "homepage": "https://github.com/bhou/collux#readme",
   "dependencies": {
-    "collar.js": "^0.7.4",
+    "collar.js": "^0.7.6",
     "page": "^1.7.1",
     "react": "^15.4.1"
   },

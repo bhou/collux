@@ -22,6 +22,9 @@ module.exports = [
         path: PROD ? path.join(__dirname, "dist") : path.join(__dirname, "dist"),
         filename: "[name].js"
     },
+    externals: {
+      "react": "React"
+    },
     module: {
       loaders: [
         {
