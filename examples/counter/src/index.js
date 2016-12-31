@@ -6,7 +6,8 @@ import Collux from '../../../lib/index.js';
 import DevToolAddon from 'collar.js-dev-client';
 Collux.use(new DevToolAddon());
 
-let app = Collux.createApp('redux-single-route-app', {
+let app = Collux.createApp('redux-multiple-routes-app');
+/*let app = Collux.createApp('redux-single-route-app', {
   updateState: (state) => {
     viewComponent.setState(state);
   },
@@ -14,7 +15,7 @@ let app = Collux.createApp('redux-single-route-app', {
     return {value: 101}
   }
 });
-
+*/
 const Link = app.Link;
 
 class CounterApp extends React.Component {
@@ -66,15 +67,16 @@ class Home extends React.Component {
   }
 }
 
-//let app = Collux.createApp('redux-multiple-routes-app');
+
 let viewComponent = null;
+/*
 app.setRenderer(() => {
   viewComponent = ReactDOM.render(
     <CounterApp sensor={app.getViewSensor()}/>,
     document.getElementById('root')
   )
 })
-
+*/
 /*
 app.setRenderer(() => {
   viewComponent = ReactDOM.render(
@@ -88,7 +90,7 @@ app.setViewStateUpdater((state) => {
 });
 */
 
-/*
+
 app.setDefaultRoute('/home');
 
 app.route('/counter', {
@@ -117,13 +119,12 @@ app.route('/home', {
     viewComponent.setState(state);
   }
 });
-*/
 
-/*
+
 app.setStoreStateInitiator(() => {
   return {value: 100}
 });
-*/
+
 
 /*
 let myState = {value : 0};

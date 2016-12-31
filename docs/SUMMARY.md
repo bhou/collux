@@ -9,6 +9,7 @@
 
 * [Setup Environment](SETUP.md)
 * [Create Your First App](FIRST_APP.md)
+* [Advanced Usage](ADVANCED.md)
 
 
 ## Predefined architectures
@@ -19,10 +20,12 @@
 
 ## API Document
 
-* [Common](api/common.md)
+* [Collux](api/Collux.md)
 
-* [Redux Single Route App](api/redux_single_route_app.md)
+* [Application](api/Application.md)
 
-* [Redux Multiple Route App](api/redux_multi_route_app.md)
+* [Component](api/Component.md)
 
-## Build Your Own Architecture
+* [ReduxSingleRouteApp](api/redux_single_route_app.md)
+
+* [ReduxMultipleRouteApp](api/redux_multi_route_app.md)

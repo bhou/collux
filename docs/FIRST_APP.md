@@ -128,4 +128,13 @@ Well done! Your just made your first application, Now run your application again
 
 ![redux single route app complete](assets/redux-single-route-app-arch-3.png)
 
-You can play with your app and collar dev tool to understand how data flows.
+You can play with your app and collar dev tool to understand how data flows. Start collar-dev-server, open http://localhost:7500, and rerun following codepen:
+
+<p data-height="400" data-theme-id="dark" data-slug-hash="ObezLN" data-default-tab="result" data-user="bhou" data-embed-version="2" data-pen-title="collux-counter-example" class="codepen">See the Pen <a href="https://codepen.io/bhou/pen/ObezLN/">collux-counter-example</a> by Bo HOU (<a href="http://codepen.io/bhou">@bhou</a>) on <a href="http://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;

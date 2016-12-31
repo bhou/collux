@@ -1,6 +1,11 @@
 {
-  "plugins": [ "theme-api" ],
+  "title": "Collux",
+  "root": "./docs",
+  "plugins": [ "theme-api", "youtube", "codepen", "github" ],
   "pluginsConfig": {
+    "github": {
+      "url": "https://github.com/bhou/collux/"
+    },
     "theme-api": {
       "languages": [
         {
@@ -12,4 +17,3 @@
     }
   }
 }
-

@@ -1,9 +1,16 @@
-# Common API for all architectures
+# Collux
+
+The top level object
 
 {% method %}
 ## Collux.createApp(arch, options) : Application
 
 Create an collux application with specified architecture.
+
+Supported architectures:
+
+- redux-single-route-app
+- redux-multiple-routes-app
 
 #### Arguments
 | Arguement | Type | Description |
@@ -15,7 +22,7 @@ Create an collux application with specified architecture.
 
 | Return | Type | Description |
 | -- | -- | -- |
-| app | Application | the application object |
+| app | [Application](Application.md) | the application object |
 
 {% sample lang="javascript" %}
 create an application with specified architecture
@@ -42,7 +49,7 @@ Use an addon
 | -- | -- | -- |
 | addon | Addon | the collux addon |
 
-Now only supports collar.js dev client, see example code.
+Now only supports collar.js dev client addon, see example code.
 
 {% sample lang="javascript" %}
 Enable collar dev tool
@@ -54,17 +61,30 @@ Collux.use(new DevToolAddon());
 
 {% endmethod %}
 
-
 {% method %}
 
-## app.createComponent(name, namespace:, metadata = {}) : Component
+## Collux.Link
 
-Create a component in application
+The React Component to support client side routing
 
-#### Arguments
-| Arguement | Type | Description |
+#### Properties
+| Property | Type | Description |
 | -- | -- | -- |
-| name | String | the component name |
+| to | String | the url path to link to |
+| sensor | Sensor | the sensor object |
 
+{% sample lang="javascript" %}
+
+A client side link to '/user'
+
+```javascript
+<Link to="/user" sensor={viewSensor}>This is a client side router link</Link>
+```
 
 {% endmethod %}
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
