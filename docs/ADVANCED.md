@@ -10,11 +10,11 @@ However, sometimes you probably want to create a customized data flow. In this c
 
 ## Reimplement a reducer data flow with collar.js
 
-Collux is based on collar.js. The predefined architecture is just a shortcut to build data flow. Under the hood, the architecture API (for example, *app.reduce*) uses collar.js API to build the data flow.
+Collux is based on collar.js. The predefined architecture is just a shortcut to build data flow. Under the hood, the architecture API \(for example, _app.reduce_\) uses collar.js API to build the data flow.
 
 Let's review the single route app data flow:
 
-![single route application architecture](../assets/redux-single-route-app-arch-3.png)
+![](/docs/assets/redux-single-route-app-arch-3.png)
 
 A reducer data flow look like this:
 
@@ -60,7 +60,6 @@ input
     })
   })
   .to(output);  // pipe it to the output
-
 ```
 
 If you want to customize the action, you can wrap the flow in a function, and pass an action type string and a reducer function to it, so that each time you call the function, it generate a new data flow with new action type and reducer.
@@ -82,8 +81,9 @@ function createReducerDataflow(actionName, reducer) {
 }
 ```
 
-&nbsp;
+ 
 
-&nbsp;
+ 
 
-&nbsp;
+ 
+
