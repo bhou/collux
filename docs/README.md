@@ -1,7 +1,7 @@
 
 # Collux
 
-Another Redux framework, that you can understand much easier.
+Another Redux framework, with architecture, data flow visualization and much more.
 
 > Collar.js + Redux = Collux
 

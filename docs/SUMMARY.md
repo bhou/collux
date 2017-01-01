@@ -4,6 +4,7 @@
 
 * [Introduction](README.md)
 * [Collar.js In 5 minutes](COLLAR.md)
+* [Understand Redux with collux](UNDERSTAND_REDUX.md)
 
 ## Get Started
 
@@ -18,7 +19,7 @@
 
 * [Redux Multiple Route App](arch/redux_multi_route_app.md)
 
-## API Document
+## API Reference
 
 * [Collux](api/Collux.md)
 
