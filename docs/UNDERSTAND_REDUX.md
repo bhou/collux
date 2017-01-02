@@ -2,6 +2,10 @@
 
 Collux is a redux framework implemented with collar.js. With collar dev tool, you can visualize the architecture, data flow, and business logic of your application. It is very easy to learn, and understand Redux architecture with collux.
 
+See the following 3 minutes video to understand Redux framework with Collux
+
+{% youtube %}https://www.youtube.com/watch?v=Uy_RZL8jkzQ{% endyoutube %}
+
 In this chapter, I will use collux and collar dev tool to introduce several important concepts of Redux architecture.
 
 ## Single Store, Single State Object
