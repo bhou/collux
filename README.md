@@ -1,5 +1,7 @@
 # Collux
 
+![build status](https://travis-ci.org/bhou/collux.svg?branch=master)
+
 Another Redux framework, with architecture, data flow visualization, and much more.
 
 > Collar.js + Redux = Collux
