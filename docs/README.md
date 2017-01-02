@@ -1,7 +1,7 @@
 
 # Collux
 
-![build status](https://travis-ci.org/bhou/collux.svg?branch=master)
+[![Build Status](https://travis-ci.org/bhou/collux.svg?branch=master)](https://travis-ci.org/bhou/collux)
 
 Another Redux framework, with architecture, data flow visualization and much more.
 
