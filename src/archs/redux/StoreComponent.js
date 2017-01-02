@@ -54,7 +54,7 @@ class StoreComponent extends Component {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_INITIATE;
       })
       .to(this.initStateActuator())
-      .map('reduce', {
+      .map(`@reducer_${Constants.ACTION_INITIATE} reduce`, {
         __result__: 'the previous state object'
       }, {
         state: 'the new state obejct'
@@ -71,7 +71,7 @@ class StoreComponent extends Component {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_RENDER;
       })
       .to(this.getStateActuator())
-      .map('reduce', {
+      .map(`@reducer_${Constants.ACTION_RENDER} reduce`, {
         __result__: 'the previous state object'
       }, {
         state: 'the new state obejct'
@@ -223,7 +223,7 @@ class StoreComponent extends Component {
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
       .to('state getter', this.getStateActuator())
-      .map('reduce', {
+      .map(`@reducer_${actionType} reduce`, {
         __result__: 'the previous state object'
       }, {
         state: 'the new state obejct'
@@ -250,7 +250,7 @@ class StoreComponent extends Component {
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
       .to('state getter', this.getStateActuator())
-      .map('reduce', {
+      .map(`@reducer_${actionType} reduce`, {
         __result__: 'the previous state object'
       }, {
         state: 'the new state obejct'

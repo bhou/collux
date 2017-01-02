@@ -109,6 +109,10 @@ class ReduxSingleRouteApp extends App {
   // ---------------------
   // utils
   getCurrentLocation() {
+    if (typeof window === 'undefined') {
+      console.warn('Window Object does not exist!')
+      return null;
+    }
     const { pathname, search, hash } = window.location;
     let path = pathname + search + hash;
     let basename = page.base();

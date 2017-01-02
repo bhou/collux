@@ -9,8 +9,8 @@ class Component {
     if (!this.metadata.arch) this.metadata.arch = name;
     
     this._ns = collar.ns(this.namespace, this.metadata);
-    this._input = this._ns.input(this.name + '.input');
-    this._output = this._ns.output(this.name + '.output');
+    this._input = this._ns.input(`@input ${this.name}.input`);
+    this._output = this._ns.output(`@output ${this.name}.output`);
     this._handleMsg = collar.toNode(this._input, this._output);
   }
 
