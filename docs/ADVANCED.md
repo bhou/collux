@@ -14,7 +14,7 @@ Collux is based on collar.js. The predefined architecture is just a shortcut to 
 
 Let's review the single route app data flow:
 
-![](/docs/assets/redux-single-route-app-arch-3.png)
+![](assets/redux-single-route-app-arch-3.png)
 
 A reducer data flow look like this:
 
@@ -86,4 +86,3 @@ function createReducerDataflow(actionName, reducer) {
  
 
  
-
