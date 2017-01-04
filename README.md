@@ -7,6 +7,7 @@ Another Redux framework, with architecture, data flow visualization, and much mo
 > Collar.js + Redux = Collux
 
 Check out this 3 minutes video: [https://www.youtube.com/watch?v=Uy_RZL8jkzQ](https://www.youtube.com/watch?v=Uy_RZL8jkzQ)
+
 ------
 
 ## Why another framework?
