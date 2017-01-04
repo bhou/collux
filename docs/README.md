@@ -9,6 +9,9 @@ Another Redux framework, with architecture, data flow visualization and much mor
 
 ------
 
+Check out this 3 minutes video:
+{% youtube %}https://www.youtube.com/watch?v=Uy_RZL8jkzQ{% endyoutube %}
+
 ## Why another framework?
 
 High quality software requires every developer has the same understanding of not only the code but also the architecture. However, software is not easy to build, things goes complex when software becomes big, it is very hard to keep every one in the team to get the same level of understanding. That's why there are different architectures and corresponding frameworks to help the team to build the understanding.
