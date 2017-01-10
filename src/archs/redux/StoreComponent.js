@@ -24,6 +24,7 @@ class StoreComponent extends Component {
     this._asyncInitStateSaver = options.saveInitStateAsync;
 
     this._reduceCounter = 0;
+    this._unnamedNodeCounter = 0;
 
     this._prepareStateChanged = this.ns().map('prepare [state changed]', {
         __result__: 'the new store state object'
@@ -74,7 +75,7 @@ class StoreComponent extends Component {
       .when(Constants.ACTION_RENDER, s => {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_RENDER;
       })
-      .to(this.getStateActuator())
+      .to(this.getStateActuator(Constants.ACTION_RENDER))
       .map('prepare [render]', s => {
         return s.set(Constants.MSG_TYPE, Constants.MSG_RENDER)
           .set(Constants.KEY_STATE, s.getResult())
@@ -122,10 +123,10 @@ class StoreComponent extends Component {
 
   initStateSaver() {
     if (!this._asyncInitStateSaver && !this._syncInitStateSaver) {
-      return this.setStateActuator();
+      return this.setStateActuator(Constants.ACTION_INITIATE);
     }
 
-    return this.ns().actuator('init state saver', {
+    return this.ns().actuator(`@initStateSaver init state save`, {
       __result__: 'the init state object'
     }, {
       __result__: 'the saved state object'
@@ -145,8 +146,8 @@ class StoreComponent extends Component {
     });
   }
 
-  initStateActuator() {
-    let actuator = this.ns().actuator('state initiator', { 
+  initStateActuator(id) {
+    let actuator = this.ns().actuator(`@initState state initiator`, { 
       any: 'parameter'
     }, {
       __result__: 'initial state'
@@ -174,8 +175,9 @@ class StoreComponent extends Component {
     return actuator;
   }
 
-  getStateActuator() {
-    let actuator = this.ns().actuator('state getter', {}, {
+  getStateActuator(id) {
+    let name = id ? `getState_${id}` : `getState_${this._unnamedNodeCounter++}`;
+    let actuator = this.ns().actuator(`@${name} state getter`, {}, {
       __result__: 'the current state object'
     }, (s, done) => {
       try {
@@ -202,8 +204,9 @@ class StoreComponent extends Component {
     return actuator;
   }
 
-  setStateActuator() {
-    let actuator = this.ns().actuator('state setter', {
+  setStateActuator(id) {
+    let name = id ? `setState_${id}` : `setState_${this._unnamedNodeCounter++}`;
+    let actuator = this.ns().actuator(`@${name} state setter`, {
       state: 'the new state object'
     }, {
       __result__: 'the saved state object'
@@ -244,7 +247,7 @@ class StoreComponent extends Component {
   reduce(actionType, reducer) {
     if (this._reduceCounter == 0) {
       this._prepareStateChanged.to(this._errorhandler);
-      this._saveStatePipeline = this.setStateActuator();
+      this._saveStatePipeline = this.setStateActuator(actionType);
       this._saveStatePipeline.to(this._prepareStateChanged);
     } 
     
@@ -252,7 +255,7 @@ class StoreComponent extends Component {
 
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
-      .to('state getter', this.getStateActuator())
+      .to('state getter', this.getStateActuator(actionType))
       .map(`@reducer_${actionType} reduce`, {
         __result__: 'the previous state object'
       }, {
@@ -271,7 +274,7 @@ class StoreComponent extends Component {
   reduceAsync(actionType, reducer) {
     if (this._reduceCounter == 0) {
       this._prepareStateChanged.to(this._errorhandler);
-      this._saveStatePipeline = this.setStateActuator();
+      this._saveStatePipeline = this.setStateActuator(actionType);
       this._saveStatePipeline.to(this._prepareStateChanged);
     }
     
@@ -279,7 +282,7 @@ class StoreComponent extends Component {
     
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
-      .to('state getter', this.getStateActuator())
+      .to('state getter', this.getStateActuator(actionType))
       .map(`@reducer_${actionType} reduce`, {
         __result__: 'the previous state object'
       }, {
@@ -294,7 +297,7 @@ class StoreComponent extends Component {
           done(null, newState);
         });
       })
-      .to('state setter', this.setStateActuator())
+      .to('state setter', this.setStateActuator(actionType))
       .to(this._prepareStateChanged);
   }
 

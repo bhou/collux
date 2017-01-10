@@ -8170,6 +8170,7 @@
 	    _this._asyncInitStateSaver = options.saveInitStateAsync;
 
 	    _this._reduceCounter = 0;
+	    _this._unnamedNodeCounter = 0;
 
 	    _this._prepareStateChanged = _this.ns().map('prepare [state changed]', {
 	      __result__: 'the new store state object'
@@ -8216,7 +8217,7 @@
 
 	      this.input().when(_Constants2.default.ACTION_RENDER, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === _Constants2.default.ACTION_RENDER;
-	      }).to(this.getStateActuator()).map('prepare [render]', function (s) {
+	      }).to(this.getStateActuator(_Constants2.default.ACTION_RENDER)).map('prepare [render]', function (s) {
 	        return s.set(_Constants2.default.MSG_TYPE, _Constants2.default.MSG_RENDER).set(_Constants2.default.KEY_STATE, s.getResult()).del(_Constants2.default.ACTION_TYPE).del('__result__');
 	      }).to(this._errorhandler);
 	    }
@@ -8266,10 +8267,10 @@
 	      var _this2 = this;
 
 	      if (!this._asyncInitStateSaver && !this._syncInitStateSaver) {
-	        return this.setStateActuator();
+	        return this.setStateActuator(_Constants2.default.ACTION_INITIATE);
 	      }
 
-	      return this.ns().actuator('init state saver', {
+	      return this.ns().actuator('@initStateSaver init state save', {
 	        __result__: 'the init state object'
 	      }, {
 	        __result__: 'the saved state object'
@@ -8290,10 +8291,10 @@
 	    }
 	  }, {
 	    key: 'initStateActuator',
-	    value: function initStateActuator() {
+	    value: function initStateActuator(id) {
 	      var _this3 = this;
 
-	      var actuator = this.ns().actuator('state initiator', {
+	      var actuator = this.ns().actuator('@initState state initiator', {
 	        any: 'parameter'
 	      }, {
 	        __result__: 'initial state'
@@ -8322,10 +8323,11 @@
 	    }
 	  }, {
 	    key: 'getStateActuator',
-	    value: function getStateActuator() {
+	    value: function getStateActuator(id) {
 	      var _this4 = this;
 
-	      var actuator = this.ns().actuator('state getter', {}, {
+	      var name = id ? 'getState_' + id : 'getState_' + this._unnamedNodeCounter++;
+	      var actuator = this.ns().actuator('@' + name + ' state getter', {}, {
 	        __result__: 'the current state object'
 	      }, function (s, done) {
 	        try {
@@ -8353,10 +8355,11 @@
 	    }
 	  }, {
 	    key: 'setStateActuator',
-	    value: function setStateActuator() {
+	    value: function setStateActuator(id) {
 	      var _this5 = this;
 
-	      var actuator = this.ns().actuator('state setter', {
+	      var name = id ? 'setState_' + id : 'setState_' + this._unnamedNodeCounter++;
+	      var actuator = this.ns().actuator('@' + name + ' state setter', {
 	        state: 'the new state object'
 	      }, {
 	        __result__: 'the saved state object'
@@ -8399,7 +8402,7 @@
 	    value: function reduce(actionType, reducer) {
 	      if (this._reduceCounter == 0) {
 	        this._prepareStateChanged.to(this._errorhandler);
-	        this._saveStatePipeline = this.setStateActuator();
+	        this._saveStatePipeline = this.setStateActuator(actionType);
 	        this._saveStatePipeline.to(this._prepareStateChanged);
 	      }
 
@@ -8407,7 +8410,7 @@
 
 	      this.input().when(actionType, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === actionType;
-	      }).to('state getter', this.getStateActuator()).map('@reducer_' + actionType + ' reduce', {
+	      }).to('state getter', this.getStateActuator(actionType)).map('@reducer_' + actionType + ' reduce', {
 	        __result__: 'the previous state object'
 	      }, {
 	        state: 'the new state obejct'
@@ -8425,7 +8428,7 @@
 	    value: function reduceAsync(actionType, reducer) {
 	      if (this._reduceCounter == 0) {
 	        this._prepareStateChanged.to(this._errorhandler);
-	        this._saveStatePipeline = this.setStateActuator();
+	        this._saveStatePipeline = this.setStateActuator(actionType);
 	        this._saveStatePipeline.to(this._prepareStateChanged);
 	      }
 
@@ -8433,7 +8436,7 @@
 
 	      this.input().when(actionType, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === actionType;
-	      }).to('state getter', this.getStateActuator()).map('@reducer_' + actionType + ' reduce', {
+	      }).to('state getter', this.getStateActuator(actionType)).map('@reducer_' + actionType + ' reduce', {
 	        __result__: 'the previous state object'
 	      }, {
 	        state: 'the new state obejct'
@@ -8446,7 +8449,7 @@
 
 	          done(null, newState);
 	        });
-	      }).to('state setter', this.setStateActuator()).to(this._prepareStateChanged);
+	      }).to('state setter', this.setStateActuator(actionType)).to(this._prepareStateChanged);
 	    }
 	  }], [{
 	    key: 'getNextDefaultStoreName',
