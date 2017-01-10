@@ -8,7 +8,7 @@ exports["test redux framework"] = {
     const testAddon = new CollarTestAddon();
     collar
       .use(testAddon)
-      //.use(new CollarDevToolAddon());
+      .use(new CollarDevToolAddon());
 
     const app = Collux.createApp('redux-single-route-app', {
       initState: () => {

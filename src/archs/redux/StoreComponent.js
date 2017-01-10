@@ -9,7 +9,7 @@ class StoreComponent extends Component {
     this._isGetStateAsync = !! options.getStateAsync;
     this._isSetStateAsync = !! options.setStateAsync;
     this._isInitStateAsync = !! options.initStateAsync;
-    this._isInitReducerAsync = !! options.initReducerAsync;
+    this._isSaveInitStateAsync = !! options.saveInitStateAsync;
 
     this._syncStateGetter = options.getState;
     this._asyncStateGetter = options.getStateAsync;
@@ -20,8 +20,8 @@ class StoreComponent extends Component {
     this._syncStateInitiator = options.initState;
     this._asyncStateInitiator = options.initStateAsync;
 
-    this._syncInitReducer = options.initReducer || function(prevState, action) {return prevState};
-    this._asyncInitReducer = options.initReducerAsync;
+    this._syncInitStateSaver = options.saveInitState;
+    this._asyncInitStateSaver = options.saveInitStateAsync;
 
     this._reduceCounter = 0;
 
@@ -58,8 +58,14 @@ class StoreComponent extends Component {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_INITIATE;
       })
       .to(this.initStateActuator())
-      .to(this.initReducer())
-      .to(this.setStateActuator())
+      .map(`@reducer_${Constants.ACTION_INITIATE} reduce`, {
+        __result__: 'the previous state object'
+      }, {
+        state: 'the new state obejct'
+      }, s => {
+        return s.set(Constants.KEY_STATE, s.getResult());
+      })
+      .to(this.initStateSaver())
       .errors(s => {
         console.error(s.error);
       });
@@ -69,14 +75,6 @@ class StoreComponent extends Component {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_RENDER;
       })
       .to(this.getStateActuator())
-      .map(`@reducer_${Constants.ACTION_RENDER} reduce`, {
-        __result__: 'the previous state object'
-      }, {
-        state: 'the new state obejct'
-      }, s => {
-        return s.set(Constants.KEY_STATE, s.getResult());
-      })
-      .to(this.setStateActuator())
       .map('prepare [render]', s => {
         return s.set(Constants.MSG_TYPE, Constants.MSG_RENDER)
           .set(Constants.KEY_STATE, s.getResult())
@@ -113,39 +111,38 @@ class StoreComponent extends Component {
     }
   }
 
-  setInitReducer(reducer, async) {
-    this._isInitReducerAsync = async;
+  setInitStateSaver(initStateSaver, async) {
+    this._isSaveInitStateAsync = async;
     if (!!async) {
-      this._asyncInitReducer = reducer;
+      this._asyncInitStateSaver = initStateSaver;
     } else {
-      this._syncInitReducer = reducer;
+      this._syncInitStateSaver = initStateSaver;
     }
   }
 
-  initReducer() {
-    return this.ns().processor(`@reducer_${Constants.ACTION_INITIATE} reduce init action`, {
-      __result__: 'the initial state'
+  initStateSaver() {
+    if (!this._asyncInitStateSaver && !this._syncInitStateSaver) {
+      return this.setStateActuator();
+    }
+
+    return this.ns().actuator('init state setter', {
+      __result__: 'the init state object'
     }, {
-      state: 'the new state'
+      __result__: 'the saved state object'
     }, (s, done) => {
-      let initState = s.getResult();
-
-      if (this._isInitReducerAsync) {
-        this._asyncInitReducer.call(
-          this, initState, {actionType: Constants.ACTION_INITIATE}, (err, newState) => {
-            if (err) return done(err);
-
-            return done(null, s.set(Constants.KEY_STATE, newState));
-          })
-      } else {
-        try {
-          let newState = this._syncInitReducer.call(this, initState, {actionType: Constants.ACTION_INITIATE})
-          done(null, s.set(Constants.KEY_STATE, newState));
-        } catch (e) {
-          return done(e);
+      try {
+        let state = s.get(Constants.KEY_STATE);
+                
+        if (this._isSaveInitStateAsync) {
+          this._asyncInitStateSaver.call(this, state, done);
+        } else {
+          this._syncInitStateSaver.call(this, state);
+          return done(null, state);
         }
+      } catch (e) {
+        return done(e);
       }
-    })
+    });
   }
 
   initStateActuator() {
