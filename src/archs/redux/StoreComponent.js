@@ -9,6 +9,7 @@ class StoreComponent extends Component {
     this._isGetStateAsync = !! options.getStateAsync;
     this._isSetStateAsync = !! options.setStateAsync;
     this._isInitStateAsync = !! options.initStateAsync;
+    this._isInitReducerAsync = !! options.initReducerAsync;
 
     this._syncStateGetter = options.getState;
     this._asyncStateGetter = options.getStateAsync;
@@ -18,6 +19,9 @@ class StoreComponent extends Component {
 
     this._syncStateInitiator = options.initState;
     this._asyncStateInitiator = options.initStateAsync;
+
+    this._syncInitReducer = options.initReducer || function(prevState, action) {return prevState};
+    this._asyncInitReducer = options.initReducerAsync;
 
     this._reduceCounter = 0;
 
@@ -54,13 +58,7 @@ class StoreComponent extends Component {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_INITIATE;
       })
       .to(this.initStateActuator())
-      .map(`@reducer_${Constants.ACTION_INITIATE} reduce`, {
-        __result__: 'the previous state object'
-      }, {
-        state: 'the new state obejct'
-      }, s => {
-        return s.set(Constants.KEY_STATE, s.getResult());
-      })
+      .to(this.initReducer())
       .to(this.setStateActuator())
       .errors(s => {
         console.error(s.error);
@@ -113,6 +111,41 @@ class StoreComponent extends Component {
     } else {
       this._syncStateInitiator = stateInitiator;
     }
+  }
+
+  setInitReducer(reducer, async) {
+    this._isInitReducerAsync = async;
+    if (!!async) {
+      this._asyncInitReducer = reducer;
+    } else {
+      this._syncInitReducer = reducer;
+    }
+  }
+
+  initReducer() {
+    return this.ns().processor(`@reducer_${Constants.ACTION_INITIATE} reduce init action`, {
+      __result__: 'the initial state'
+    }, {
+      state: 'the new state'
+    }, (s, done) => {
+      let initState = s.getResult();
+
+      if (this._isInitReducerAsync) {
+        this._asyncInitReducer.call(
+          this, initState, {actionType: Constants.ACTION_INITIATE}, (err, newState) => {
+            if (err) return done(err);
+
+            return done(null, s.set(Constants.KEY_STATE, newState));
+          })
+      } else {
+        try {
+          let newState = this._syncInitReducer.call(this, initState, {actionType: Constants.ACTION_INITIATE})
+          done(null, s.set(Constants.KEY_STATE, newState));
+        } catch (e) {
+          return done(e);
+        }
+      }
+    })
   }
 
   initStateActuator() {
