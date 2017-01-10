@@ -1,8 +1,22 @@
 import Component from './Component';
+import collar from 'collar.js';
+
 
 class App {
   constructor() {
     this._components = new Map();
+  }
+
+  override(fullName, type, fn) {
+    if (['actuator.sync', 
+        'actuator.async', 
+        'processor.sync', 
+        'processor.async', 
+        'filter'].indexOf(type) < 0) {
+      console.warn('Unsupported registry type', type, 'for node', fullName);
+      return;
+    }
+    collar.registry.register(fullName, type, fn);
   }
 
   addComponent(component) {

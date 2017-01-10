@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/bhou/collux#readme",
   "dependencies": {
-    "collar.js": "^0.7.6",
+    "collar.js": "0.7.7",
     "page": "^1.7.1",
     "react": "^15.4.1"
   },
