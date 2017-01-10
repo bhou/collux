@@ -26,6 +26,7 @@
 * [Application](api/Application.md)
 
 * [Component](api/Component.md)
+* [Store Component](api/StoreComponent.md)
 
 * [ReduxSingleRouteApp](api/redux_single_route_app.md)
 
