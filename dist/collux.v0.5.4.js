@@ -8230,6 +8230,12 @@
 
 	      this.input().when(_Constants2.default.ACTION_RENDER, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === _Constants2.default.ACTION_RENDER;
+	      }).to(this.getStateActuator(_Constants2.default.ACTION_RENDER)).map('@reducer_' + _Constants2.default.ACTION_INITIATE + ' reduce', {
+	        __result__: 'the previous state object'
+	      }, {
+	        state: 'the new state obejct'
+	      }, function (s) {
+	        return s.set(_Constants2.default.KEY_STATE, s.getResult());
 	      }).to(this.getStateActuator(_Constants2.default.ACTION_RENDER)).map('prepare [render]', function (s) {
 	        return s.set(_Constants2.default.MSG_TYPE, _Constants2.default.MSG_RENDER).set(_Constants2.default.KEY_STATE, s.getResult()).del(_Constants2.default.ACTION_TYPE).del('__result__');
 	      }).to(this._errorhandler);

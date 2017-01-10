@@ -76,6 +76,14 @@ class StoreComponent extends Component {
         return s.get(Constants.ACTION_TYPE) === Constants.ACTION_RENDER;
       })
       .to(this.getStateActuator(Constants.ACTION_RENDER))
+      .map(`@reducer_${Constants.ACTION_INITIATE} reduce`, {
+        __result__: 'the previous state object'
+      }, {
+        state: 'the new state obejct'
+      }, s => {
+        return s.set(Constants.KEY_STATE, s.getResult());
+      })
+      .to(this.getStateActuator(Constants.ACTION_RENDER))
       .map('prepare [render]', s => {
         return s.set(Constants.MSG_TYPE, Constants.MSG_RENDER)
           .set(Constants.KEY_STATE, s.getResult())
