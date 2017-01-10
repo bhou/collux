@@ -125,7 +125,7 @@ class StoreComponent extends Component {
       return this.setStateActuator();
     }
 
-    return this.ns().actuator('init state setter', {
+    return this.ns().actuator('init state saver', {
       __result__: 'the init state object'
     }, {
       __result__: 'the saved state object'
