@@ -8155,7 +8155,7 @@
 	    _this._isGetStateAsync = !!options.getStateAsync;
 	    _this._isSetStateAsync = !!options.setStateAsync;
 	    _this._isInitStateAsync = !!options.initStateAsync;
-	    _this._isInitReducerAsync = !!options.initReducerAsync;
+	    _this._isSaveInitStateAsync = !!options.saveInitStateAsync;
 
 	    _this._syncStateGetter = options.getState;
 	    _this._asyncStateGetter = options.getStateAsync;
@@ -8166,10 +8166,8 @@
 	    _this._syncStateInitiator = options.initState;
 	    _this._asyncStateInitiator = options.initStateAsync;
 
-	    _this._syncInitReducer = options.initReducer || function (prevState, action) {
-	      return prevState;
-	    };
-	    _this._asyncInitReducer = options.initReducerAsync;
+	    _this._syncInitStateSaver = options.saveInitState;
+	    _this._asyncInitStateSaver = options.saveInitStateAsync;
 
 	    _this._reduceCounter = 0;
 
@@ -8206,19 +8204,19 @@
 	      // render keeps all the properties in your signal
 	      this.input().when(_Constants2.default.ACTION_INITIATE, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === _Constants2.default.ACTION_INITIATE;
-	      }).to(this.initStateActuator()).to(this.initReducer()).to(this.setStateActuator()).errors(function (s) {
-	        console.error(s.error);
-	      });
-
-	      this.input().when(_Constants2.default.ACTION_RENDER, function (s) {
-	        return s.get(_Constants2.default.ACTION_TYPE) === _Constants2.default.ACTION_RENDER;
-	      }).to(this.getStateActuator()).map('@reducer_' + _Constants2.default.ACTION_RENDER + ' reduce', {
+	      }).to(this.initStateActuator()).map('@reducer_' + _Constants2.default.ACTION_INITIATE + ' reduce', {
 	        __result__: 'the previous state object'
 	      }, {
 	        state: 'the new state obejct'
 	      }, function (s) {
 	        return s.set(_Constants2.default.KEY_STATE, s.getResult());
-	      }).to(this.setStateActuator()).map('prepare [render]', function (s) {
+	      }).to(this.initStateSaver()).errors(function (s) {
+	        console.error(s.error);
+	      });
+
+	      this.input().when(_Constants2.default.ACTION_RENDER, function (s) {
+	        return s.get(_Constants2.default.ACTION_TYPE) === _Constants2.default.ACTION_RENDER;
+	      }).to(this.getStateActuator()).map('prepare [render]', function (s) {
 	        return s.set(_Constants2.default.MSG_TYPE, _Constants2.default.MSG_RENDER).set(_Constants2.default.KEY_STATE, s.getResult()).del(_Constants2.default.ACTION_TYPE).del('__result__');
 	      }).to(this._errorhandler);
 	    }
@@ -8253,40 +8251,40 @@
 	      }
 	    }
 	  }, {
-	    key: 'setInitReducer',
-	    value: function setInitReducer(reducer, async) {
-	      this._isInitReducerAsync = async;
+	    key: 'setInitStateSaver',
+	    value: function setInitStateSaver(initStateSaver, async) {
+	      this._isSaveInitStateAsync = async;
 	      if (!!async) {
-	        this._asyncInitReducer = reducer;
+	        this._asyncInitStateSaver = initStateSaver;
 	      } else {
-	        this._syncInitReducer = reducer;
+	        this._syncInitStateSaver = initStateSaver;
 	      }
 	    }
 	  }, {
-	    key: 'initReducer',
-	    value: function initReducer() {
+	    key: 'initStateSaver',
+	    value: function initStateSaver() {
 	      var _this2 = this;
 
-	      return this.ns().processor('@reducer_' + _Constants2.default.ACTION_INITIATE + ' reduce init action', {
-	        __result__: 'the initial state'
+	      if (!this._asyncInitStateSaver && !this._syncInitStateSaver) {
+	        return this.setStateActuator();
+	      }
+
+	      return this.ns().actuator('init state setter', {
+	        __result__: 'the init state object'
 	      }, {
-	        state: 'the new state'
+	        __result__: 'the saved state object'
 	      }, function (s, done) {
-	        var initState = s.getResult();
+	        try {
+	          var state = s.get(_Constants2.default.KEY_STATE);
 
-	        if (_this2._isInitReducerAsync) {
-	          _this2._asyncInitReducer.call(_this2, initState, { actionType: _Constants2.default.ACTION_INITIATE }, function (err, newState) {
-	            if (err) return done(err);
-
-	            return done(null, s.set(_Constants2.default.KEY_STATE, newState));
-	          });
-	        } else {
-	          try {
-	            var newState = _this2._syncInitReducer.call(_this2, initState, { actionType: _Constants2.default.ACTION_INITIATE });
-	            done(null, s.set(_Constants2.default.KEY_STATE, newState));
-	          } catch (e) {
-	            return done(e);
+	          if (_this2._isSaveInitStateAsync) {
+	            _this2._asyncInitStateSaver.call(_this2, state, done);
+	          } else {
+	            _this2._syncInitStateSaver.call(_this2, state);
+	            return done(null, state);
 	          }
+	        } catch (e) {
+	          return done(e);
 	        }
 	      });
 	    }
