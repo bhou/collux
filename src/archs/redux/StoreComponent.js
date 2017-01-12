@@ -302,7 +302,9 @@ class StoreComponent extends Component {
             return done(error);
           }
 
-          done(null, s.new(newState));
+          done(null, s.new({
+            state: newState
+          }));
         });
       })
       .to('state setter', this.setStateActuator(actionType))
