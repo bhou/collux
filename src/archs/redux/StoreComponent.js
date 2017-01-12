@@ -291,7 +291,7 @@ class StoreComponent extends Component {
     this.input()
       .when(actionType, s => s.get(Constants.ACTION_TYPE) === actionType)
       .to('state getter', this.getStateActuator(actionType))
-      .map(`@reducer_${actionType} reduce`, {
+      .processor(`@reducer_${actionType} reduce`, {
         __result__: 'the previous state object'
       }, {
         state: 'the new state obejct'

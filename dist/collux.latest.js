@@ -8455,7 +8455,7 @@
 
 	      this.input().when(actionType, function (s) {
 	        return s.get(_Constants2.default.ACTION_TYPE) === actionType;
-	      }).to('state getter', this.getStateActuator(actionType)).map('@reducer_' + actionType + ' reduce', {
+	      }).to('state getter', this.getStateActuator(actionType)).processor('@reducer_' + actionType + ' reduce', {
 	        __result__: 'the previous state object'
 	      }, {
 	        state: 'the new state obejct'
