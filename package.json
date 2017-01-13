@@ -1,6 +1,6 @@
 {
   "name": "collux",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "flux, redux, collar.js, architecture",
   "main": "lib/index.js",
   "scripts": {
@@ -29,7 +29,8 @@
   "dependencies": {
     "collar.js": "0.7.7",
     "page": "^1.7.1",
-    "react": "^15.4.1"
+    "react": "^15.4.1",
+    "url-parse": "^1.1.7"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",

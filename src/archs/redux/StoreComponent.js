@@ -81,7 +81,7 @@ class StoreComponent extends Component {
       }, {
         state: 'the new state obejct'
       }, s => {
-        return s.set(Constants.KEY_STATE, s.getResult());
+        return s.set(Constants.KEY_STATE,  s.getResult());
       })
       .to(this.getStateActuator(Constants.ACTION_RENDER))
       .map('prepare [render]', s => {

@@ -37,7 +37,7 @@ class MultiRouteViewComponent extends Component {
       let pageName = `${this.name}.${route}`;
       let ns = collar.ns(pageName, {
         arch: pageName
-      })
+      });
       let pageInput = ns.input('page input');
       let pageOutput = ns.output('page output');
 

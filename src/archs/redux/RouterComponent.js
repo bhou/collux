@@ -1,6 +1,7 @@
 import Constants from '../Constants';
 import Component from '../../Component';
-import page from 'page';
+
+import urlParser from 'url-parse';
 
 class RouterComponent extends Component {
   constructor(options = {}) {
@@ -21,8 +22,16 @@ class RouterComponent extends Component {
         }
         return this._currentUrl;
       })
-      .map('inject url in msg', s => {
-        return s.set(Constants.KEY_URL, s.getResult())
+      .map('inject url in msg and state', s => {
+        let state = s.get(Constants.KEY_STATE);
+        let parsedUrl = urlParser(s.getResult(), true);
+        if (typeof state === 'object') {
+          state[Constants.KEY_ROUTE] = parsedUrl;
+        }
+
+        return s
+          .set(Constants.KEY_STATE, state)
+          .set(Constants.KEY_URL, s.getResult())
           .del('__result__');
       })
       .to(this.output());
