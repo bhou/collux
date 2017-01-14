@@ -18,13 +18,19 @@ class MultiRouteViewComponent extends Component {
 
     this._routeDispatcher = this.ns().do('match route', s => {
       let url = s.get(Constants.KEY_URL);
-      if (!url) return this._defaultRoute;
-      for (let routeObj of this._routeList) {
-        if (routeObj.matcher.match(url, {})) {
-          return routeObj.route;
+      let redirectRoute = this._defaultRoute;
+    
+      if (url) {
+        for (let routeObj of this._routeList) {
+          if (routeObj.matcher.match(url, {})) {
+            redirectRoute = routeObj.route;
+            break;
+          }
         }
       }
-      return this._defaultRoute;
+      
+      page.redirect(redirectRoute);
+      return redirectRoute;
     });
   }
 
@@ -93,6 +99,13 @@ class MultiRouteViewComponent extends Component {
 
   setRootPath(base) {
     page.base(base);
+  }
+
+  redirect(path) {
+    this._sensor.sensor({
+      actionType: Constants.ACTION_RENDER,
+      url: path
+    });
   }
 
   start() {

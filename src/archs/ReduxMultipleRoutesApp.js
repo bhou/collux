@@ -24,6 +24,14 @@ class ReduxMultipleRoutesApp extends ReduxSingleRouteApp {
     this.view.setDefaultRoute(route);
   }
 
+  setRootPath(root) {
+    this.view.setRootPath(root);
+  }
+
+  redirect(path) {
+    this.view.redirect(path);
+  }
+
   // ---------------------
   // life cycle
   initComponents() {
