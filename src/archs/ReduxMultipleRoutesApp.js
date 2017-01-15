@@ -1,7 +1,6 @@
 import Constants from './Constants';
 import App from '../App';
 import MultiRouteViewComponent from './redux/MultiRouteViewComponent';
-import RouterComponent from './redux/RouterComponent';
 import MiddlewareComponent from './redux/MiddlewareComponent';
 import ReduxSingleRouteApp from './ReduxSingleRouteApp';
 import router from './redux/middlewares/Router';
@@ -15,10 +14,6 @@ class ReduxMultipleRoutesApp extends ReduxSingleRouteApp {
 
     this.middleware = new MiddlewareComponent();
 
-    /*this.router = new RouterComponent({
-      getName: () => 'router'
-    });*/
-    
     this.use('router', router);
   }
 
