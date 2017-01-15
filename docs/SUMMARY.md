@@ -1,10 +1,10 @@
 # Summary
 
 ## Overview
-
 * [Introduction](README.md)
 * [Collar.js In 5 minutes](COLLAR.md)
 * [Understand Redux with collux](UNDERSTAND_REDUX.md)
+* [Release Note](RELEASE_NOTE.md)
 
 ## Get Started
 
@@ -22,6 +22,7 @@
 ## API Reference
 
 * [Collux](api/Collux.md)
+* [State](api/state.md)
 
 * [Application](api/Application.md)
 

@@ -123,6 +123,85 @@ app.setDefaultRoute('/counter');
 
 
 {% method %}
+## ReduxMultipleRoutesApp.setRootPath(path)
+
+Set the root path  the application. By default, the default root path is '/'
+
+#### Arguments
+| Arguement | Type | Description |
+| -- | -- | -- |
+| path | String | the default root path |
+
+{% sample lang="javascript" %}
+
+Set root path to /example
+```javascript
+// set the root path to '/example'
+app.setRootPath('/example');
+```
+
+{% endmethod %}
+
+{% method %}
+## ReduxMultipleRoutesApp.redirect(pageUrl)
+
+Redirect your app to another page (client side routing)
+
+#### Arguments
+| Arguement | Type | Description |
+| -- | -- | -- |
+| pageUrl | String | the page url |
+
+{% sample lang="javascript" %}
+
+Redirect to /counter page
+```javascript
+// redirect to /counter page
+app.redirect('/counter');
+```
+
+{% endmethod %}
+
+
+{% method %}
+## ReduxMultipleRoutesApp.use(name, middleware, async)
+
+Use a middleware
+
+#### Arguments
+| Arguement | Type | Description |
+| -- | -- | -- |
+| name | String | middleware name |
+| middleware | Function | middleware function |
+| async | boolean | if the middleware async |
+
+A middleware is a function, who takes the msg (sent from store to view) as argument, and returns a msg to next middleware (or view).
+
+sync : **function middleware(msg) : msg**
+async: **function middleware(msg, done)**
+the done function for async middleware: **function done(newMsg) : void**
+
+
+{% sample lang="javascript" %}
+
+```javascript
+// a simple log middleware
+app.use('log', function(msg) {
+  console.log(msg);
+  return msg;
+});
+
+// async middleware example
+app.use('async middleware', function(msg, done) {
+  // handle msg here
+  done(msg);
+}, true);
+```
+
+{% endmethod %}
+
+
+{% method %}
 ## ReduxMultipleRoutesApp.reduce(actionName, reducer)
 
 Create a reducer to handle action

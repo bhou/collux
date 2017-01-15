@@ -94,7 +94,7 @@
 
 	var _ViewComponent2 = _interopRequireDefault(_ViewComponent);
 
-	var _Link = __webpack_require__(42);
+	var _Link = __webpack_require__(43);
 
 	var _Link2 = _interopRequireDefault(_Link);
 
@@ -9768,7 +9768,11 @@
 
 	var _MultiRouteViewComponent2 = _interopRequireDefault(_MultiRouteViewComponent);
 
-	var _MiddlewareComponent = __webpack_require__(36);
+	var _RouterComponent = __webpack_require__(36);
+
+	var _RouterComponent2 = _interopRequireDefault(_RouterComponent);
+
+	var _MiddlewareComponent = __webpack_require__(41);
 
 	var _MiddlewareComponent2 = _interopRequireDefault(_MiddlewareComponent);
 
@@ -9776,7 +9780,7 @@
 
 	var _ReduxSingleRouteApp3 = _interopRequireDefault(_ReduxSingleRouteApp2);
 
-	var _Router = __webpack_require__(37);
+	var _Router = __webpack_require__(42);
 
 	var _Router2 = _interopRequireDefault(_Router);
 
@@ -9819,6 +9823,10 @@
 	    });
 
 	    _this.middleware = new _MiddlewareComponent2.default();
+
+	    /*this.router = new RouterComponent({
+	      getName: () => 'router'
+	    });*/
 
 	    _this.use('router', _Router2.default);
 	    return _this;
@@ -10142,11 +10150,17 @@
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	  return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	} : function (obj) {
+	  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	};
 
 	var _createClass = function () {
 	  function defineProperties(target, props) {
@@ -10166,6 +10180,10 @@
 
 	var _Component3 = _interopRequireDefault(_Component2);
 
+	var _urlParse = __webpack_require__(37);
+
+	var _urlParse2 = _interopRequireDefault(_urlParse);
+
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
 	}
@@ -10179,87 +10197,74 @@
 	function _possibleConstructorReturn(self, call) {
 	  if (!self) {
 	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof2(call)) === "object" || typeof call === "function") ? call : self;
 	}
 
 	function _inherits(subClass, superClass) {
 	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof2(superClass)));
 	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 	}
 
-	var MiddlewareComponent = function (_Component) {
-	  _inherits(MiddlewareComponent, _Component);
+	var RouterComponent = function (_Component) {
+	  _inherits(RouterComponent, _Component);
 
-	  function MiddlewareComponent() {
-	    _classCallCheck(this, MiddlewareComponent);
+	  function RouterComponent() {
+	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-	    var _this = _possibleConstructorReturn(this, (MiddlewareComponent.__proto__ || Object.getPrototypeOf(MiddlewareComponent)).call(this, 'middlewares'));
+	    _classCallCheck(this, RouterComponent);
 
-	    _this._middlewares = [];
+	    var name = options.getName ? options.getName() : RouterComponent.getNextDefaultViewName();
+
+	    var _this = _possibleConstructorReturn(this, (RouterComponent.__proto__ || Object.getPrototypeOf(RouterComponent)).call(this, name));
+
+	    _this.options = options;
+	    _this._currentUrl = null;
 	    return _this;
 	  }
 
-	  _createClass(MiddlewareComponent, [{
-	    key: 'use',
-	    value: function use(name, fn, async) {
-	      this._middlewares.push({
-	        name: name,
-	        fn: fn,
-	        async: async
-	      });
-	      return this;
-	    }
-	  }, {
+	  _createClass(RouterComponent, [{
 	    key: 'init',
 	    value: function init() {
-	      var currentNode = this.input();
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
+	      var _this2 = this;
 
-	      try {
-	        var _loop = function _loop() {
-	          var middleware = _step.value;
+	      this.input().do('check url change', function (s) {
+	        var msgType = s.get(_Constants2.default.MSG_TYPE);
 
-	          if (middleware.async) {
-	            currentNode = currentNode.processor(middleware.name, function (s, done) {
-	              try {
-	                middleware.fn(s.payload, function (newPayload) {
-	                  done(null, s.new(newPayload));
-	                });
-	              } catch (e) {
-	                done(e);
-	              }
-	            });
-	          } else {
-	            currentNode = currentNode.map(middleware.name, function (s) {
-	              var newPayload = middleware.fn(s.payload);
-	              return s.new(newPayload);
-	            });
-	          }
+	        if (msgType === _Constants2.default.MSG_RENDER) {
+	          // change the current url when received render msg
+	          var route = s.get(_Constants2.default.KEY_URL);
+	          _this2._currentUrl = route ? route : _this2._currentUrl;
+	        }
+
+	        // redirect according to 'url' state value
+	        var state = s.get(_Constants2.default.KEY_STATE);
+	        var stateUrl = state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_URL];
+
+	        var redirect = false;
+	        if (stateUrl != _this2._currentUrl) {
+	          _this2._currentUrl = stateUrl;
+	          redirect = true;
+	        }
+
+	        return {
+	          url: _this2._currentUrl,
+	          redirect: redirect
 	        };
+	      }).map('inject url in msg and state', function (s) {
+	        var destination = s.getResult();
 
-	        for (var _iterator = this._middlewares[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          _loop();
+	        var state = s.get(_Constants2.default.KEY_STATE);
+	        // inject parsed url object into state
+	        var parsedUrl = (0, _urlParse2.default)(destination.url, true);
+	        if ((typeof state === 'undefined' ? 'undefined' : _typeof(state)) === 'object') {
+	          // to compatible with primitive type state
+	          state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_PARSED_URL] = parsedUrl;
 	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
 
-	      currentNode.errors(function (s) {
-	        console.error(s.error);
+	        // change msg type to 'render' if redirect url is set
+	        var newSignal = destination.redirect ? s.set(_Constants2.default.MSG_TYPE, _Constants2.default.MSG_RENDER) : s;
+	        return newSignal.set(_Constants2.default.KEY_STATE, state).del('__result__');
 	      }).to(this.output());
 	    }
 	  }, {
@@ -10267,10 +10272,12 @@
 	    value: function start() {}
 	  }]);
 
-	  return MiddlewareComponent;
+	  return RouterComponent;
 	}(_Component3.default);
 
-	exports.default = MiddlewareComponent;
+	RouterComponent.__COUNT__ = 0;
+
+	exports.default = RouterComponent;
 
 /***/ },
 /* 37 */
@@ -10278,59 +10285,9 @@
 
 	'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = router;
-
-	var _Constants = __webpack_require__(23);
-
-	var _Constants2 = _interopRequireDefault(_Constants);
-
-	var _urlParse = __webpack_require__(38);
-
-	var _urlParse2 = _interopRequireDefault(_urlParse);
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { default: obj };
-	}
-
-	var currentUrl = null;
-
-	function router(msg) {
-	  var msgType = msg[_Constants2.default.MSG_TYPE];
-	  var state = msg[_Constants2.default.KEY_STATE];
-	  var stateUrl = state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_URL];
-
-	  if (msgType === _Constants2.default.MSG_RENDER) {
-	    // change the current url when received render msg
-	    currentUrl = stateUrl ? stateUrl : currentUrl;
-	  }
-
-	  var redirect = false;
-	  if (stateUrl != currentUrl) {
-	    currentUrl = stateUrl;
-	    redirect = true;
-	  }
-
-	  var parsedUrl = (0, _urlParse2.default)(currentUrl, true);
-	  state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_PARSED_URL] = parsedUrl;
-
-	  if (redirect) msg[_Constants2.default.MSG_TYPE] = Constans.MSG_RENDER;
-	  msg[_Constants2.default.KEY_STATE] = state;
-
-	  return msg;
-	}
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var required = __webpack_require__(39)
-	  , lolcation = __webpack_require__(40)
-	  , qs = __webpack_require__(41)
+	var required = __webpack_require__(38)
+	  , lolcation = __webpack_require__(39)
+	  , qs = __webpack_require__(40)
 	  , protocolre = /^([a-z][a-z0-9.+-]*:)?(\/\/)?([\S\s]*)/i;
 
 	/**
@@ -10686,7 +10643,7 @@
 
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10730,7 +10687,7 @@
 
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -10762,7 +10719,7 @@
 	 */
 	module.exports = function lolcation(loc) {
 	  loc = loc || global.location || {};
-	  URL = URL || __webpack_require__(38);
+	  URL = URL || __webpack_require__(37);
 
 	  var finaldestination = {}
 	    , type = typeof loc
@@ -10790,7 +10747,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10857,7 +10814,193 @@
 
 
 /***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+
+	var _Constants = __webpack_require__(23);
+
+	var _Constants2 = _interopRequireDefault(_Constants);
+
+	var _Component2 = __webpack_require__(3);
+
+	var _Component3 = _interopRequireDefault(_Component2);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+
+	var MiddlewareComponent = function (_Component) {
+	  _inherits(MiddlewareComponent, _Component);
+
+	  function MiddlewareComponent() {
+	    _classCallCheck(this, MiddlewareComponent);
+
+	    var _this = _possibleConstructorReturn(this, (MiddlewareComponent.__proto__ || Object.getPrototypeOf(MiddlewareComponent)).call(this, 'middlewares'));
+
+	    _this._middlewares = [];
+	    return _this;
+	  }
+
+	  _createClass(MiddlewareComponent, [{
+	    key: 'use',
+	    value: function use(name, fn, async) {
+	      this._middlewares.push({
+	        name: name,
+	        fn: fn,
+	        async: async
+	      });
+	      return this;
+	    }
+	  }, {
+	    key: 'init',
+	    value: function init() {
+	      var currentNode = this.input();
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        var _loop = function _loop() {
+	          var middleware = _step.value;
+
+	          if (middleware.async) {
+	            currentNode = currentNode.processor(middleware.name, function (s, done) {
+	              try {
+	                middleware.fn(s.payload, function (newPayload) {
+	                  done(null, s.new(newPayload));
+	                });
+	              } catch (e) {
+	                done(e);
+	              }
+	            });
+	          } else {
+	            currentNode = currentNode.map(middleware.name, function (s) {
+	              var newPayload = middleware.fn(s.payload);
+	              return s.new(newPayload);
+	            });
+	          }
+	        };
+
+	        for (var _iterator = this._middlewares[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          _loop();
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+
+	      currentNode.errors(function (s) {
+	        console.error(s.error);
+	      }).to(this.output());
+	    }
+	  }, {
+	    key: 'start',
+	    value: function start() {}
+	  }]);
+
+	  return MiddlewareComponent;
+	}(_Component3.default);
+
+	exports.default = MiddlewareComponent;
+
+/***/ },
 /* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = router;
+
+	var _Constants = __webpack_require__(23);
+
+	var _Constants2 = _interopRequireDefault(_Constants);
+
+	var _urlParse = __webpack_require__(37);
+
+	var _urlParse2 = _interopRequireDefault(_urlParse);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	var currentUrl = null;
+
+	function router(msg) {
+	  var msgType = msg[_Constants2.default.MSG_TYPE];
+	  var state = msg[_Constants2.default.KEY_STATE];
+	  var stateUrl = state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_URL];
+
+	  if (msgType === _Constants2.default.MSG_RENDER) {
+	    // change the current url when received render msg
+	    currentUrl = stateUrl ? stateUrl : currentUrl;
+	  }
+
+	  var redirect = false;
+	  if (stateUrl != currentUrl) {
+	    currentUrl = stateUrl;
+	    redirect = true;
+	  }
+
+	  var parsedUrl = (0, _urlParse2.default)(currentUrl, true);
+	  state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_PARSED_URL] = parsedUrl;
+
+	  if (redirect) msg[_Constants2.default.MSG_TYPE] = Constans.MSG_RENDER;
+	  msg[_Constants2.default.KEY_STATE] = state;
+
+	  return msg;
+	}
+
+/***/ },
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
