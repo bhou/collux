@@ -17,9 +17,10 @@ class MultiRouteViewComponent extends Component {
     this._sensor = this.ns().sensor(this.name + ' sensor', function() {});
 
     this._routeDispatcher = this.ns().do('match route', s => {
-      let url = s.get(Constants.KEY_URL);
+      let state = s.get(Constants.KEY_STATE);
+      let url = state[Constants.STATE_SYS][Constants.STATE_URL];
+      
       let redirectRoute = this._defaultRoute;
-    
       if (url) {
         for (let routeObj of this._routeList) {
           if (routeObj.matcher.match(url, {})) {
@@ -29,7 +30,10 @@ class MultiRouteViewComponent extends Component {
         }
       }
       
-      page.redirect(redirectRoute);
+      if (s.get(Constants.MSG_TYPE) === Constants.MSG_RENDER) {
+        // only redirect the view when 'render msg' is received
+        page.redirect(redirectRoute);
+      }
       return redirectRoute;
     });
   }

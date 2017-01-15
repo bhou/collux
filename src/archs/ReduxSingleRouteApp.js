@@ -3,7 +3,7 @@ import Constants from './Constants';
 import App from '../App';
 import MemoryStoreComponent from './redux/MemoryStoreComponent';
 import ViewComponent from './redux/ViewComponent';
-import page from 'page'; // TODO; remove it. this is not good, single route app do not need page module
+import page from 'page'; // TODO: remove it. this is not good, single route app do not need page module
 
 class ReduxSingleRouteApp extends App {
   constructor(options = {}) {

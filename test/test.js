@@ -12,12 +12,14 @@ exports["test redux framework"] = {
 
     const app = Collux.createApp('redux-single-route-app', {
       initState: () => {
-        return 100;
+        return {v: 100};
       }
     })
     
     app.reduce('INCREMENT', (prevState, action) => {
-      return prevState + 1;
+      return {
+        v: prevState.v + 1
+      };
     });
     
     app.run();
@@ -28,7 +30,7 @@ exports["test redux framework"] = {
       actionType: 'INCREMENT'
     }, (error, result) => {
       test.equal(result.msgType, 'state changed');
-      test.equal(result.state, 101);
+      test.equal(result.state.v, 101);
       test.done();
     });
   },
@@ -41,12 +43,14 @@ exports["test redux framework"] = {
 
     const app = Collux.createApp('redux-single-route-app', {
       initState: () => {
-        return 100;
+        return {v: 100};
       }
     })
     
     app.reduce('INCREMENT', (prevState, action) => {
-      return prevState + 1;
+      return {
+        v: prevState.v + 1
+      };
     });
     
     app.run();
@@ -57,7 +61,7 @@ exports["test redux framework"] = {
       actionType: 'INCREMENT'
     }, (error, result) => {
       test.equal(result.msgType, 'state changed');
-      test.equal(result.state, 101);
+      test.equal(result.state.v, 101);
       test.done();
     });
   },
@@ -70,17 +74,19 @@ exports["test redux framework"] = {
 
     const app = Collux.createApp('redux-single-route-app', {
       initState: () => {
-        return 100;
+        return {v: 100};
       }
     })
     
     app.reduce('INCREMENT', (prevState, action) => {
-      return prevState + 1;
+      return {
+        v: prevState.v + 1
+      };
     });
 
     app.override('store.reducer_INCREMENT', 'processor.sync', s => {
       let prevState = s.getResult();
-      return s.set('state', prevState + 2);
+      return s.set('state', {v: prevState.v + 2});
     })
     
     app.run();
@@ -91,7 +97,7 @@ exports["test redux framework"] = {
       actionType: 'INCREMENT'
     }, (error, result) => {
       test.equal(result.msgType, 'state changed');
-      test.equal(result.state, 102);
+      test.equal(result.state.v, 102);
       test.done();
     });
   }

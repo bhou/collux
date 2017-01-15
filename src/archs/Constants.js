@@ -17,4 +17,10 @@ export default {
   KEY_ROUTE: 'route',
   KEY_URL: 'url',
   KEY_STATE: 'state',
+  
+  // predefined state keys
+  STATE_SYS: 'sys',
+  STATE_ROUTE: 'route',
+  STATE_PARSED_URL: 'parsedURL',
+  STATE_URL: 'url',
 }

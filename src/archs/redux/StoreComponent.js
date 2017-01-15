@@ -64,7 +64,10 @@ class StoreComponent extends Component {
       }, {
         state: 'the new state obejct'
       }, s => {
-        return s.set(Constants.KEY_STATE, s.getResult());
+        let state = s.getResult();
+        if (!state) state = {};
+        state[Constants.STATE_SYS] = {};
+        return s.set(Constants.KEY_STATE, state);
       })
       .to(this.initStateSaver())
       .errors(s => {
@@ -81,12 +84,16 @@ class StoreComponent extends Component {
       }, {
         state: 'the new state obejct'
       }, s => {
-        return s.set(Constants.KEY_STATE,  s.getResult());
+        let url = s.get(Constants.KEY_URL);
+        let state = s.getResult();
+        state[Constants.STATE_SYS][Constants.STATE_URL] = url;
+        return s.set(Constants.KEY_STATE,  state);
       })
-      .to(this.getStateActuator(Constants.ACTION_RENDER))
+      .to(this.setStateActuator(Constants.ACTION_RENDER))
       .map('prepare [render]', s => {
         return s.set(Constants.MSG_TYPE, Constants.MSG_RENDER)
           .set(Constants.KEY_STATE, s.getResult())
+          .del(Constants.KEY_URL)
           .del(Constants.ACTION_TYPE)
           .del('__result__');
       })
