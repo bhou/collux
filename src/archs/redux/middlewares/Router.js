@@ -2,7 +2,8 @@ import Constants from '../../Constants';
 import urlParser from 'url-parse';
 
 var currentUrl = null;
-export function router(msg) {
+
+export default function router(msg) {
   let msgType = msg[Constants.MSG_TYPE];
   let state = msg[Constants.KEY_STATE];
   let stateUrl = state[Constants.STATE_SYS][Constants.STATE_URL];

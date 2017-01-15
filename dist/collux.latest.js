@@ -10958,7 +10958,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.router = router;
+	exports.default = router;
 
 	var _Constants = __webpack_require__(23);
 
@@ -10973,6 +10973,7 @@
 	}
 
 	var currentUrl = null;
+
 	function router(msg) {
 	  var msgType = msg[_Constants2.default.MSG_TYPE];
 	  var state = msg[_Constants2.default.KEY_STATE];
