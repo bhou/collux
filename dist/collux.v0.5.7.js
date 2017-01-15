@@ -10084,7 +10084,7 @@
 	  }, {
 	    key: 'redirect',
 	    value: function redirect(path) {
-	      this._sensor.sensor({
+	      this._sensor.send({
 	        actionType: _Constants2.default.ACTION_RENDER,
 	        url: path
 	      });
