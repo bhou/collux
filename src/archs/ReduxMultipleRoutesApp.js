@@ -2,7 +2,9 @@ import Constants from './Constants';
 import App from '../App';
 import MultiRouteViewComponent from './redux/MultiRouteViewComponent';
 import RouterComponent from './redux/RouterComponent';
+import MiddlewareComponent from './redux/MiddlewareComponent';
 import ReduxSingleRouteApp from './ReduxSingleRouteApp';
+import router from './redux/middlewares/Router';
 
 class ReduxMultipleRoutesApp extends ReduxSingleRouteApp {
   constructor(options = {}) {
@@ -11,9 +13,13 @@ class ReduxMultipleRoutesApp extends ReduxSingleRouteApp {
       getName: () => 'view',
     });
 
-    this.router = new RouterComponent({
+    this.middleware = new MiddlewareComponent();
+
+    /*this.router = new RouterComponent({
       getName: () => 'router'
-    });
+    });*/
+    
+    this.use('router', router);
   }
 
   route(pattern, page) {
@@ -32,19 +38,25 @@ class ReduxMultipleRoutesApp extends ReduxSingleRouteApp {
     this.view.redirect(path);
   }
 
+  use(name, middleware) {
+    this.middleware.use(name, middleware);
+    return this;
+  }
+
   // ---------------------
   // life cycle
   initComponents() {
     this.addComponent(this.view);
     this.addComponent(this.store);
-    this.addComponent(this.router);
+    this.addComponent(this.middleware)
+    //this.addComponent(this.router);
 
     super.initComponents();
   }
   connectComponents() {
-    this.store.output().to(this.router.input());
+    this.store.output().to(this.middleware.input());
 
-    this.router.output().to(this.view.input());
+    this.middleware.output().to(this.view.input());
     
     this.view.sensor().to(this.store.input());
     this.getAppSensor().to(this.store.input());

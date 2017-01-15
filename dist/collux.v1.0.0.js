@@ -94,7 +94,7 @@
 
 	var _ViewComponent2 = _interopRequireDefault(_ViewComponent);
 
-	var _Link = __webpack_require__(41);
+	var _Link = __webpack_require__(43);
 
 	var _Link2 = _interopRequireDefault(_Link);
 
@@ -8573,7 +8573,6 @@
 	    _this._errorhandler = _this.ns().errors(function (s) {
 	      console.error(s.error);
 	    });
-	    ;
 	    return _this;
 	  }
 
@@ -9773,9 +9772,17 @@
 
 	var _RouterComponent2 = _interopRequireDefault(_RouterComponent);
 
+	var _MiddlewareComponent = __webpack_require__(41);
+
+	var _MiddlewareComponent2 = _interopRequireDefault(_MiddlewareComponent);
+
 	var _ReduxSingleRouteApp2 = __webpack_require__(26);
 
 	var _ReduxSingleRouteApp3 = _interopRequireDefault(_ReduxSingleRouteApp2);
+
+	var _Router = __webpack_require__(42);
+
+	var _Router2 = _interopRequireDefault(_Router);
 
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
@@ -9815,11 +9822,13 @@
 	      }
 	    });
 
-	    _this.router = new _RouterComponent2.default({
-	      getName: function getName() {
-	        return 'router';
-	      }
-	    });
+	    _this.middleware = new _MiddlewareComponent2.default();
+
+	    /*this.router = new RouterComponent({
+	      getName: () => 'router'
+	    });*/
+
+	    _this.use('router', _Router2.default);
 	    return _this;
 	  }
 
@@ -9843,6 +9852,12 @@
 	    value: function redirect(path) {
 	      this.view.redirect(path);
 	    }
+	  }, {
+	    key: 'use',
+	    value: function use(name, middleware) {
+	      this.middleware.use(name, middleware);
+	      return this;
+	    }
 
 	    // ---------------------
 	    // life cycle
@@ -9852,16 +9867,17 @@
 	    value: function initComponents() {
 	      this.addComponent(this.view);
 	      this.addComponent(this.store);
-	      this.addComponent(this.router);
+	      this.addComponent(this.middleware);
+	      //this.addComponent(this.router);
 
 	      _get(ReduxMultipleRoutesApp.prototype.__proto__ || Object.getPrototypeOf(ReduxMultipleRoutesApp.prototype), 'initComponents', this).call(this);
 	    }
 	  }, {
 	    key: 'connectComponents',
 	    value: function connectComponents() {
-	      this.store.output().to(this.router.input());
+	      this.store.output().to(this.middleware.input());
 
-	      this.router.output().to(this.view.input());
+	      this.middleware.output().to(this.view.input());
 
 	      this.view.sensor().to(this.store.input());
 	      this.getAppSensor().to(this.store.input());
@@ -10799,6 +10815,191 @@
 
 /***/ },
 /* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+
+	var _Constants = __webpack_require__(23);
+
+	var _Constants2 = _interopRequireDefault(_Constants);
+
+	var _Component2 = __webpack_require__(3);
+
+	var _Component3 = _interopRequireDefault(_Component2);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+
+	var MiddlewareComponent = function (_Component) {
+	  _inherits(MiddlewareComponent, _Component);
+
+	  function MiddlewareComponent() {
+	    _classCallCheck(this, MiddlewareComponent);
+
+	    var _this = _possibleConstructorReturn(this, (MiddlewareComponent.__proto__ || Object.getPrototypeOf(MiddlewareComponent)).call(this, 'middlewares'));
+
+	    _this._middlewares = [];
+	    return _this;
+	  }
+
+	  _createClass(MiddlewareComponent, [{
+	    key: 'use',
+	    value: function use(name, middleware, async) {
+	      this._middlewares.push({
+	        name: name,
+	        fn: fn,
+	        async: async
+	      });
+	      return this;
+	    }
+	  }, {
+	    key: 'init',
+	    value: function init() {
+	      var currentNode = this.input();
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        var _loop = function _loop() {
+	          var middleware = _step.value;
+
+	          if (middleware.async) {
+	            currentNode = currentNode.processor(middleware.name, function (s, done) {
+	              try {
+	                middleware.fn(s.payload, function (newPayload) {
+	                  done(null, s.new(newPayload));
+	                });
+	              } catch (e) {
+	                done(e);
+	              }
+	            });
+	          } else {
+	            currentNode = currentNode.map(middleware.name, function (s) {
+	              var newPayload = middleware.fn(s.payload);
+	              return s.new(newPayload);
+	            });
+	          }
+	        };
+
+	        for (var _iterator = this._middlewares[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          _loop();
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+
+	      currentNode.errors(function (s) {
+	        console.error(s.error);
+	      }).to(this.output());
+	    }
+	  }, {
+	    key: 'start',
+	    value: function start() {}
+	  }]);
+
+	  return MiddlewareComponent;
+	}(_Component3.default);
+
+	exports.default = MiddlewareComponent;
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.router = router;
+
+	var _Constants = __webpack_require__(23);
+
+	var _Constants2 = _interopRequireDefault(_Constants);
+
+	var _urlParse = __webpack_require__(37);
+
+	var _urlParse2 = _interopRequireDefault(_urlParse);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	var currentUrl = null;
+	function router(msg) {
+	  var msgType = msg[_Constants2.default.MSG_TYPE];
+	  var state = msg[_Constants2.default.KEY_STATE];
+	  var stateUrl = state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_URL];
+
+	  if (msgType === _Constants2.default.MSG_RENDER) {
+	    // change the current url when received render msg
+	    currentUrl = stateUrl ? stateUrl : currentUrl;
+	  }
+
+	  var redirect = false;
+	  if (stateUrl != currentUrl) {
+	    currentUrl = stateUrl;
+	    redirect = true;
+	  }
+
+	  var parsedUrl = (0, _urlParse2.default)(currentUrl, true);
+	  state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_PARSED_URL] = parsedUrl;
+
+	  if (redirect) msg[_Constants2.default.MSG_TYPE] = Constans.MSG_RENDER;
+	  msg[_Constants2.default.KEY_STATE] = state;
+
+	  return msg;
+	}
+
+/***/ },
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

@@ -16,7 +16,6 @@ class ViewComponent extends Component {
     this._errorhandler = this.ns().errors(s => {
         console.error(s.error);
       });
-;
   }
 
   init() {
