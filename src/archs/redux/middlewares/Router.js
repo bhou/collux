@@ -22,7 +22,7 @@ export default function router(msg) {
   let parsedUrl = urlParser(currentUrl, true);
   state[Constants.STATE_SYS][Constants.STATE_PARSED_URL] = parsedUrl;
 
-  if (redirect) msg[Constants.MSG_TYPE] = Constans.MSG_RENDER;
+  if (redirect) msg[Constants.MSG_TYPE] = Constants.MSG_RENDER;
   msg[Constants.KEY_STATE] = state;
 
   return msg;

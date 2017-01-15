@@ -10316,7 +10316,7 @@
 	  var parsedUrl = (0, _urlParse2.default)(currentUrl, true);
 	  state[_Constants2.default.STATE_SYS][_Constants2.default.STATE_PARSED_URL] = parsedUrl;
 
-	  if (redirect) msg[_Constants2.default.MSG_TYPE] = Constans.MSG_RENDER;
+	  if (redirect) msg[_Constants2.default.MSG_TYPE] = _Constants2.default.MSG_RENDER;
 	  msg[_Constants2.default.KEY_STATE] = state;
 
 	  return msg;
