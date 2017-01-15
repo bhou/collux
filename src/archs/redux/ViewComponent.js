@@ -46,12 +46,12 @@ class ViewComponent extends Component {
     return this._sensor;
   }
 
-  render() {
+  render(state) {
     if (!this._renderer) {
       console.error('No renderer specified in view:', this.name);
       return;
     }
-    this._renderer.call(this);
+    this._renderer.call(this, state);
   }
 
   updateState(state) {
@@ -91,7 +91,7 @@ class ViewComponent extends Component {
     let actuator = this.ns().actuator('renderer', (s, done) => {
       try {
         if (!this._renderer) return done();
-        this.render();
+        this.render(s.get(Constants.KEY_STATE));
         done();
       } catch (e) {
         return done(e);

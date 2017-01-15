@@ -72,7 +72,8 @@ class MultiRouteViewComponent extends Component {
           msgType: 'must be [render]'
         }, s => s.get(Constants.MSG_TYPE) === Constants.MSG_RENDER)
         .do('renderer', s => {
-          this._pages.get(route).render();
+          let state = s.get(Constants.KEY_STATE);
+          this._pages.get(route).render(state);
         })
         .to(updateStatePipeline);
         
