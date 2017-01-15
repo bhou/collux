@@ -77,13 +77,13 @@ Set a renderer to render the view
 #### Arguments
 | Arguement | Type | Description |
 | -- | -- | -- |
-| renderer | Function | render function, function(): void |
+| renderer | Function | render function, function(state): void |
 
 {% sample lang="javascript" %}
 
 render a counter view
 ```javascript
-app.setRenderer(() => {
+app.setRenderer((state) => {
   ReactDOM.render(
     <CounterView/>,
     document.getElementById('root')
