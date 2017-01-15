@@ -68,6 +68,27 @@ By default, the default route is '/'. You can change the default route with *set
 app.setDefaultRoute('/counter');
 ```
 
+#### Set the root path
+
+If your application starts from a path different from '/', you can call `setRootPath(path)` method to setup the root path
+```javascript
+app.setRootPath('/example');
+```
+
+#### Use middleware
+
+Middleware is used to manipulate the message sent from store to view component. A middleware is a function, which takes message as input and output a message to next middleware or view:
+
+```javascript
+app.use('log middleware', msg => {
+  console.log(msg);
+  return msg;
+});
+```
+
+The default multiple routes app architecture integrates a router middleware.
+
+
 
 #### Add reducer to handle actions
 
