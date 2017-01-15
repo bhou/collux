@@ -10879,7 +10879,7 @@
 
 	  _createClass(MiddlewareComponent, [{
 	    key: 'use',
-	    value: function use(name, middleware, async) {
+	    value: function use(name, fn, async) {
 	      this._middlewares.push({
 	        name: name,
 	        fn: fn,

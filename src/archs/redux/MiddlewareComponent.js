@@ -8,7 +8,7 @@ class MiddlewareComponent extends Component {
     this._middlewares = [];
   }
 
-  use(name, middleware, async) {
+  use(name, fn, async) {
     this._middlewares.push({
       name,
       fn,
