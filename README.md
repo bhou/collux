@@ -1,5 +1,7 @@
 # Collux
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/bhou/collux.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/bhou/collux.svg?branch=master)](https://travis-ci.org/bhou/collux)
 
 Another Redux framework, with architecture, data flow visualization, and much more.
