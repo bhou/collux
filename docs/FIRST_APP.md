@@ -22,7 +22,7 @@ Add the following code at the beginning of *index.js*
 ```javascript
 import Collux from 'collux';
 // add the following two lines
-import DevToolAddon from 'collar.js-dev-client';
+import DevToolAddon from 'collar.js-dev-webclient';
 Collux.use(new DevToolAddon());
 ```
 

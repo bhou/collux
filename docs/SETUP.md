@@ -21,7 +21,7 @@ npm install collux --save
 Install collux dev tool
 
 ```
-npm install --save-dev collar.js-dev-client collar-dev-server
+npm install --save-dev collar.js-dev-webclient collar-dev-server
 ```
 
 Optional, you can install collar-dev-server globally too
