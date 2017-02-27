@@ -12,10 +12,13 @@ class ViewComponent extends Component {
     this._stateUpdater = options.updateState;
 
     this._sensor = this.ns().sensor(this.name + ' sensor', function() {});
-
+    this._sensor.dispatch = (msg) => {
+      return this._sensor.send(msg, false);
+    };
+    
     this._errorhandler = this.ns().errors(s => {
-        console.error(s.error);
-      });
+      console.error(s.error);
+    });
   }
 
   init() {

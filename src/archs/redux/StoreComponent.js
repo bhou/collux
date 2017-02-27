@@ -70,9 +70,17 @@ class StoreComponent extends Component {
         return s.set(Constants.KEY_STATE, state);
       })
       .to(this.initStateSaver())
-      .errors(s => {
+      .map('prepare [render]', s => {
+        return s.set(Constants.MSG_TYPE, Constants.MSG_RENDER)
+          .set(Constants.KEY_STATE, s.getResult())
+          .del(Constants.KEY_URL)
+          .del(Constants.ACTION_TYPE)
+          .del('__result__');
+      })
+      .to(this._errorhandler);
+      /*.errors(s => {
         console.error(s.error);
-      });
+      });*/
 
     this.input()
       .when(Constants.ACTION_RENDER, s => {

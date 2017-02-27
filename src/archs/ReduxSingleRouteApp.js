@@ -146,10 +146,10 @@ class ReduxSingleRouteApp extends App {
     }, false);
 
     // send render action when store initiated
-    this.getAppSensor().send({
+    /*this.getAppSensor().send({
       actionType: Constants.ACTION_RENDER,
       url: this.getCurrentLocation()
-    }, false);
+    }, false);*/
   }
 
   run(...args) {

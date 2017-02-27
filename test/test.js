@@ -14,7 +14,7 @@ exports["test redux framework"] = {
       initState: () => {
         return {v: 100};
       }
-    })
+    });
     
     app.reduce('INCREMENT', (prevState, action) => {
       return {
@@ -24,7 +24,6 @@ exports["test redux framework"] = {
     
     app.run();
 
-    
     const testSuite = testAddon.getTestSuite('store.store.input', 'store.store.output');
     testSuite.test({
       actionType: 'INCREMENT'

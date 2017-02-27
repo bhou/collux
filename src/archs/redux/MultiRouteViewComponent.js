@@ -110,7 +110,7 @@ class MultiRouteViewComponent extends Component {
     this._sensor.send({
       actionType: Constants.ACTION_RENDER,
       url: path
-    });
+    }, false);
   }
 
   start() {
